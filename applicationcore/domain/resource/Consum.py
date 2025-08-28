@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from UtilNumber import UtilNumber
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
-from inventory import Supply
+
 
 @dataclass
 class Consum:
@@ -20,6 +20,7 @@ class Consum:
         self.set_idLender(idLender)
         self.set_idMonitor(idMonitor)
         self.set_codeSupply(codeSupply)
+        self.set_quantity(quantity)
         
     @classmethod
     def build(cls, id: str, count: int, rfidLender: str, idLender: str, idMonitor: str, codeSupply: str, quantity: int):

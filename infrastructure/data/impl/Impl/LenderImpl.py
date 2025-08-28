@@ -15,10 +15,11 @@ class LenderImpl(LenderRepository):
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS lenders (
                 id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
+                rfid TEXT NOT NULL,
+                names TEXT NOT NULL,
+                surnames TEXT NOT NULL,
                 email TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                address TEXT NOT NULL
+                phone TEXT NOT NULL
             )
         ''')
         conn.commit()
@@ -27,26 +28,26 @@ class LenderImpl(LenderRepository):
     def find_all(self) -> List[Lender]:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, email, phone, address FROM lenders")
+        cursor.execute("SELECT id, rfid, names, surnames, email, phone FROM lenders")
         rows = cursor.fetchall()
         conn.close()
 
-        return [Lender(id=row[0], name=row[1], email=row[2], phone=row[3], address=row[4]) for row in rows]
+        return [Lender(id=row[0], rfid=row[1], names=row[2], surnames=row[3], email=row[4], phone=row[5]) for row in rows]
 
     def save(self, lender: Lender) -> None:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT OR REPLACE INTO lenders (id, name, email, phone, address)
+            INSERT OR REPLACE INTO lenders (id, rfid, names, surnames, email, phone)
             VALUES (?, ?, ?, ?, ?)
-        ''', (lender._id, lender._name, lender._email, lender._phone, lender._address))
+        ''', (lender._id, lender._rfid, lender._names, lender._surnames, lender._email, lender._phone))
         conn.commit()
         conn.close()
 
     def find_by_id(self, id: str) -> Optional[Lender]:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, email, phone, address FROM lenders WHERE id = ?", (id,))
+        cursor.execute("SELECT id, rfid, names, surnames, email, phone FROM lenders WHERE id = ?", (id,))
         row = cursor.fetchone()
         conn.close()
 

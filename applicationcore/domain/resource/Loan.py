@@ -18,14 +18,14 @@ class Loan:
     _returnDate: datetime
     _status: LoanStatus
 
-    def __init__(self, id: str, count: int, rfidLender: str, idLender: str, idMonitor: str, serialHardware: Hardware, loanDate: datetime, returnDate: datetime, status: LoanStatus):
+    def __init__(self, id: str, count: int, rfidLender: str, idLender: str, idMonitor: str, serialHardware: str, loanDate: datetime, returnDate: datetime, status: LoanStatus):
         self.set_id(id)
         self.set_count(count)
         self.set_rfidLender(rfidLender)
         self.set_idLender(idLender)
         self.set_idMonitor(idMonitor)
         self.set_serialHardware(serialHardware)
-        self.set_loadDate(loanDate)
+        self.set_loanDate(loanDate)
         self.set_returnDate(returnDate)
         self.set_status(status)
     
@@ -67,16 +67,16 @@ class Loan:
         self._idMonitor = UtilText.apply_trim(idMonitor)
         return self
     
-    def set_serialHardware(self, hardware: str):
-        self._hardware = UtilText.apply_trim(hardware)
+    def set_serialHardware(self, serialHardware: str):
+        self._hardware = UtilText.apply_trim(serialHardware)
         return self 
     
-    def set_loadDate(self, loadDate: datetime):
-        self._loadDate = UtilObject.get_default(datetime, datetime.now())
+    def set_loanDate(self, loanDate: datetime):
+        self._loanDate = UtilObject.get_default(loanDate, datetime.now())
         return self
     
     def set_returnDate(self, returnDate: datetime):
-        self._returnDate = UtilObject.get_default(datetime, datetime.now())
+        self._returnDate = UtilObject.get_default(returnDate, datetime.now())
         return self
     
     def set_status(self, status: LoanStatus):
@@ -89,7 +89,7 @@ class Loan:
     def get_idLender(self) -> str: return self._idLender
     def get_idMonitor(self) -> str: return self._idMonitor
     def get_serialHardware(self) -> Hardware: return self._hardware
-    def get_loadDate(self) -> datetime: return self._loadDate
+    def get_loanDate(self) -> datetime: return self._loanDate
     def get_returnDate(self) -> datetime: return self._returnDate
     def get_status(self) -> LoanStatus: return self._status
     

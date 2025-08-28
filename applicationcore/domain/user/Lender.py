@@ -1,19 +1,20 @@
 from User import User
 
 class Lender(User):
-    def __init__(self, id: str, name: str, email: str, phone: str, address: str):
-        super().__init__(id, name, email, phone, address)
-    
+    def __init__(self, id: str, rfid: str, names: str, surnames: str, email: str, phone: str):
+        super().__init__(id, rfid, names, surnames, email, phone)
+
     @classmethod
-    def build(cls, id: str, name: str, email: str, phone: str, address: str):
-        return cls(id, name, email, phone, address)
-    
+    def build(cls, id: str, rfid: str, names: str, surnames: str, email: str, phone: str):
+        return cls(id, rfid, names, surnames, email, phone)
+
     @classmethod
     def build_dummy(cls):
         return cls(
             id = "",
-            name = "",
+            rfid = "",
+            names = "",
+            surnames = "",
             email = "",
-            phone = "",
-            address = ""
+            phone = ""
         )

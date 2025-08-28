@@ -14,7 +14,7 @@ class Hardware:
     _idType: str
     _available: HardwareAvailable
     
-    def __init__(self, serial: str, name: str, description: str, comment: str, state: HardwareState, idType: HardwareType, available: HardwareAvailable):
+    def __init__(self, serial: str, name: str, description: str, comment: str, state: HardwareState, idType: str, available: HardwareAvailable):
         self.set_serial(serial)
         self.set_name(name)
         self.set_description(description)
@@ -55,15 +55,15 @@ class Hardware:
         self._comment = UtilText.apply_trim(comment)
         return self
 
-    def set_state(self, state: str):
+    def set_state(self, state: HardwareState):
         self._state = state
         return self
     
     def set_idType(self, idType: str):
-        self._state = UtilText.apply_trim(idType)
+        self._idType = idType
         return self
     
-    def set_available(self, available: str):
+    def set_available(self, available: HardwareAvailable):
         self._available = available
 
     def get_serial(self) -> str: return self._serial
