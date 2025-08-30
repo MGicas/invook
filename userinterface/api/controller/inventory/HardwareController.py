@@ -1,11 +1,9 @@
-# co/edu/uco/invook/userinterface/controller/hardware_controller.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from co.edu.uco.invook.userinterface.api.serializers.HardwareSerializer import HardwareSerializer
-from co.edu.uco.invook.applicationcore.facade.impl.HardwareFacade import HardwareFacade
+from co.edu.uco.invook.userinterface.api.serializers import HardwareSerializer
+from co.edu.uco.invook.applicationcore.facade.impl import HardwareFacade
 
 class HardwareController(APIView):
 

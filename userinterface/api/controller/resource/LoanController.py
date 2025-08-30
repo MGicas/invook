@@ -1,12 +1,9 @@
-# co/edu/uco/invook/userinterface/controller/loan_controller.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 from co.edu.uco.invook.userinterface.api.serializers.LoanSerializer import LoanSerializer
 from co.edu.uco.invook.applicationcore.facade.impl.LoanFacade import LoanFacade
-
 
 class LoanController(APIView):
 
@@ -33,7 +30,7 @@ class LoanController(APIView):
 
     def patch(self, request, pk=None):
         loan_id = str(pk)
-        # partial=True permite enviar solo algunos campos
+        
         serializer = LoanSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             updated_loan = LoanFacade.update_partial(loan_id, serializer.validated_data)
@@ -43,6 +40,6 @@ class LoanController(APIView):
 
 
     def delete(self, request, pk=None):
-        loan_id = str(pk)  # en dominio Loan el id es str
+        loan_id = str(pk)  
         LoanFacade.delete(loan_id)
         return Response({'message': 'Loan deleted'}, status=status.HTTP_204_NO_CONTENT)

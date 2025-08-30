@@ -1,11 +1,10 @@
-# co/edu/uco/invook/userinterface/controller/supply_controller.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from co.edu.uco.invook.userinterface.api.serializers.SupplySerializer import SupplySerializer
-from co.edu.uco.invook.applicationcore.facade.impl.SupplyFacade import SupplyFacade
+from co.edu.uco.invook.applicationcore.facade.impl import SupplyFacade
+from co.edu.uco.invook.userinterface.api.serializers import SupplySerializer
+
 
 class SupplyController(APIView):
 

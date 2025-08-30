@@ -16,17 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from co.edu.uco.invook.userinterface.api.controller.resource.LoanController import LoanController
-from co.edu.uco.invook.userinterface.api.controller.resource.ConsumController import ConsumController
-from co.edu.uco.invook.userinterface.api.controller.user.LenderController import LenderController
-from co.edu.uco.invook.userinterface.api.controller.inventory.HardwareController import HardwareController
-from co.edu.uco.invook.userinterface.api.controller.inventory.SupplyController import SupplyController
-from co.edu.uco.invook.userinterface.api.controller.user.UserController import UserController
-from co.edu.uco.invook.userinterface.api.controller.user.AdministrativeUserController import AdministrativeUserController
+
+from co.edu.uco.invook.userinterface.api.controller.inventory import HardwareController, SupplyController
+from co.edu.uco.invook.userinterface.api.controller.resource import ConsumController, LoanController
+from co.edu.uco.invook.userinterface.api.controller.user import AdministrativeUserController, LenderController, UserController
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/loans/', LoanController.as_view()),               # GET y POST
+    '''path('api/loans/', LoanController.as_view(), ),               # GET y POST
     path('api/loans/<int:pk>/', LoanController.as_view()),      # DELETE
     path('api/consums/', ConsumController.as_view()),           # GET y POST
     path('api/consums/<int:pk>/', ConsumController.as_view()),      # DELETE
@@ -39,5 +37,6 @@ urlpatterns = [
     path('api/user/', UserController.as_view()),           # GET y POST
     path('api/user/<int:pk>/', UserController.as_view()),      # DELETE
     path('api/administrativeUser/', AdministrativeUserController.as_view()),           # GET y POST
-    path('api/administrativeUser/<int:pk>/', AdministrativeUserController.as_view()),      # DELETE
+    path('api/administrativeUser/<int:pk>/', AdministrativeUserController.as_view())   '''   # DELETE
 ]
+

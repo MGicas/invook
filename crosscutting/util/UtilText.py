@@ -1,5 +1,5 @@
 import re
-from crosscutting.util import UtilObject
+from co.edu.uco.invook.crosscutting.util.UtilObject import UtilObject
 
 
 class UtilText:

@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'invook.urls'
+ROOT_URLCONF = 'co.edu.uco.invook.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'invook.wsgi.application'
+WSGI_APPLICATION = 'co.edu.uco.invook.wsgi.application'
 
 
 # Database

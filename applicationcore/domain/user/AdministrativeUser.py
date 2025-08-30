@@ -1,52 +1,38 @@
-from dataclasses import dataclass
-from AdministrativeUserState import AdministrativeUserState
-from AdministrativeUserRole import AdministrativeUserRole
-from UtilText import UtilText
+from django.db import models
+from django.contrib.auth.hashers import make_password
+import UtilText
+from co.edu.uco.invook.applicationcore.domain.user import AdministrativeUserRole, AdministrativeUserState, User
 
-@dataclass
-class AdministrativeUser:
-    _username: str
-    _password: str
-    _state: AdministrativeUserState
-    _role: AdministrativeUserRole
-    
-    def __init__(self, username: str, password: str, state: AdministrativeUserState, role: AdministrativeUserRole):
-        self.set_username(username)
-        self.set_password(password)
-        self.set_state(state)
-        self.set_role(role)
-    
-    @classmethod
-    def build(cls, username: str, password: str, state: AdministrativeUserState, role: AdministrativeUserRole):
-        return cls(username, password, state, role)
+class AdministrativeUser(User):
+    username = models.CharField(max_length = 100, unique = True)
+    password = models.CharField(max_length = 100)
+    state = models.CharField(
+        max_length = 20,
+        choices = [(state.name, state.value) for state in AdministrativeUserState],
+        default = AdministrativeUserState.ACTIVO.name
+    )
+    role = models.CharField(
+        max_length = 20,
+        choices = [(role.name, role.value) for role in AdministrativeUserRole],
+        default = AdministrativeUserRole.MONITOR.name
+    )
 
-    @classmethod
-    def build_dummy(cls):
-        return cls(
-            username = "",
-            password = "",
-            state = AdministrativeUserState.INACTIVO,
-            role = AdministrativeUserRole.MONITOR
-        )
+    class Meta:
+        indexes = [
+            models.Index(fields =['username']),
+        ]
+    
+    def save(self, *args, **kwargs):
+        self._username = UtilText.apply_trim(self._username)
+        self._password = UtilText.apply_trim(self._password)
+        
+        super().save(*args, **kwargs)
 
-    def set_username(self, username: str):
-        self._username = UtilText.apply_trim(username)
-        return self
-    
-    def set_password(self, password: str):
-        self._password = UtilText.apply_trim(password)
-        return self
-    
-    def set_state(self, state: AdministrativeUserState):
-        self._state = state
-        return self
-    
-    def set_role(self, role: AdministrativeUserRole):
-        self._role = role
-        return self
-    
-    def get_username(self) -> str: return self._username
-    
-    def get_state(self) -> AdministrativeUserState: return self._state
-    
-    def get_role(self) -> AdministrativeUserRole: return self._role
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        
+    def __str__(self):
+        return f"AdministrativeUser {self._username} - {self._state}"
+
+    def __str__(self):
+        return f"AdministrativeUser: {self._username} ({self._role})"    

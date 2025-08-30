@@ -4,3 +4,8 @@ class UtilNumber:
 
     def __new__(cls):
         raise TypeError("Esta clase no puede ser instanciada.")
+    
+    @staticmethod
+    def ensure_positive(number: int) -> int:
+        if number < 0:
+            raise ValueError("Number must be positive")

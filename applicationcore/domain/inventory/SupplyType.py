@@ -1,9 +1,8 @@
 from django.db import models
-from dataclasses import dataclass
-
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
+from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
 
-class HardwareType:
+class SupplyType(models.Model):
     id = models.CharField(max_length = 40, primary_key = True)
     name = models.CharField(max_length = 100, unique = True)
     description = models.TextField()
