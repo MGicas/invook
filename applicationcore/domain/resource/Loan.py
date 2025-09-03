@@ -1,32 +1,30 @@
 from django.db import models
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText
+from co.edu.uco.invook.applicationcore.domain.inventory import Hardware
+from co.edu.uco.invook.crosscutting.util import UtilText
 from co.edu.uco.invook.applicationcore.domain.resource import LoanStatus
 
-class Loan(models.Model):
-    id = models.CharField(max_length = 40)
-    rfidLender = models.CharField(max_length = 100)
-    idLender = models.CharField(max_length = 100)
-    idMonitor = models.CharField(max_length = 100)
-    serialHardware = models.CharField(max_length = 100)
-    loanDate = models.DateTimeField(auto_now_add = True)
-    returnDate = models.DateTimeField()
+class Loan(models.Model): 
+    id = models.CharField(max_length = 40, primary_key = True, editable = False)
+    id_lender = models.CharField(max_length = 100)
+    id_monitor = models.CharField(max_length = 100)
+    loan_date = models.DateTimeField(auto_now_add = True)
+    return_date = models.DateTimeField()
     status = models.CharField(
         max_length = 20,
         choices = [(status.name, status.value) for status in LoanStatus],
         default = LoanStatus.ABIERTO.name
     )
 
+    hardware = models.ManyToManyField(Hardware, through = 'LoanHardware', related_name = 'loans')
+
     def save(self, *args, **kwargs):
-        self._id = UtilText.apply_trim(self.id)
-        self._rfidLender = UtilText.apply_trim(self.rfidLender)
-        self._idLender = UtilText.apply_trim(self.idLender)
-        self._idMonitor = UtilText.apply_trim(self.idMonitor)
-        self._serialHardware = UtilText.apply_trim(self.serialHardware)
-        self._count = UtilNumber.ensure_positive(self.count)
+        self.id = UtilText.apply_trim(self.id)
+        self.id_lender = UtilText.apply_trim(self.id_lender)
+        self.id_monitor = UtilText.apply_trim(self.id_monitor)
         
         super().save(*args, **kwargs)
 
 
     def __str__(self):
-        return f"Loan {self._id} - {self._status}"
+        return f"Loan {self.id} - {self.status}"
     

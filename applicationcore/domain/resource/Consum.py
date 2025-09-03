@@ -5,7 +5,7 @@ from co.edu.uco.invook.applicationcore.domain.user import AdministrativeUser, Le
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 
 class Consum(models.Model):
-    id = models.CharField(max_length = 40, primary_key = True)
+    id = models.CharField(max_length = 40, primary_key = True, editable=False)
     id_lender = models.ForeignKey(Lender, on_delete = models.CASCADE)
     id_monitor = models.ForeignKey(AdministrativeUser, on_delete = models.CASCADE)
 

@@ -4,7 +4,7 @@ from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
 
 class Supply(models.Model):
-    code = models.CharField(max_length = 100, primary_key = True)
+    code = models.CharField(max_length = 100, primary_key = True, editable=False)
     name = models.CharField(max_length = 100, unique = True)
     description = models.TextField()
     supply_type = models.ForeignKey(SupplyType, on_delete = models.CASCADE)

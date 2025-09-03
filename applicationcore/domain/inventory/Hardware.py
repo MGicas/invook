@@ -5,7 +5,8 @@ from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 
 class Hardware(models.Model):
-    serial = models.CharField(max_length = 50, primary_key = True)
+
+    serial = models.CharField(max_length = 50, primary_key = True, editable=False)
     name = models.CharField(max_length = 100)
     description = models.TextField()
     comment = models.TextField()
@@ -14,7 +15,7 @@ class Hardware(models.Model):
         choices = [(state.name, state.value) for state in HardwareState],
         default = HardwareState.BUENO.name
     )
-    hardware_type = models.ForeignKey(HardwareType, on_delete=models.CASCADE)
+    hardware_type = models.ForeignKey(HardwareType, on_delete = models.CASCADE)
     available = models.CharField(
         max_length = 20,
         choices = [(available.name, available.value) for available in HardwareAvailable],

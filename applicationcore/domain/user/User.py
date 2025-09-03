@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 import UtilText
 
 class User(models.Model):
-    id = models.CharField(max_length = 15, primary_key = True)
+    id = models.CharField(max_length = 15, primary_key = True, editable = False)
     rfid = models.CharField(max_length = 50, unique = True)
     names = models.CharField(max_length = 100)
     surnames = models.CharField(max_length = 100)
