@@ -5,6 +5,7 @@ from co.edu.uco.invook.services.inventory.HardwareService import HardwareService
 class HardwareUseCase(GeneralUseCase):
 
     def create(self, **kwargs) -> Hardware:
+        #Logica de negocio
         return HardwareService.create_hardware(**kwargs)
 
     def get(self, serial: str) -> Hardware:

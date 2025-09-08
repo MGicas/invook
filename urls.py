@@ -17,26 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from co.edu.uco.invook.userinterface.api.controller.inventory import HardwareController, SupplyController
-from co.edu.uco.invook.userinterface.api.controller.resource import ConsumController, LoanController
-from co.edu.uco.invook.userinterface.api.controller.user import AdministrativeUserController, LenderController, UserController
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    '''path('api/loans/', LoanController.as_view(), ),               # GET y POST
-    path('api/loans/<int:pk>/', LoanController.as_view()),      # DELETE
-    path('api/consums/', ConsumController.as_view()),           # GET y POST
-    path('api/consums/<int:pk>/', ConsumController.as_view()),      # DELETE
-    path('api/lenders/', LenderController.as_view()),           # GET y POST
-    path('api/lenders/<int:pk>/', LenderController.as_view()),      # DELETE
-    path('api/hardwares/', HardwareController.as_view()),           # GET y POST
-    path('api/hardwares/<int:pk>/', HardwareController.as_view()),      # DELETE
-    path('api/supplys/', SupplyController.as_view()),           # GET y POST
-    path('api/supplys/<int:pk>/', SupplyController.as_view()),      # DELETE
-    path('api/user/', UserController.as_view()),           # GET y POST
-    path('api/user/<int:pk>/', UserController.as_view()),      # DELETE
-    path('api/administrativeUser/', AdministrativeUserController.as_view()),           # GET y POST
-    path('api/administrativeUser/<int:pk>/', AdministrativeUserController.as_view())   '''   # DELETE
+    
 ]
 

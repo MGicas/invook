@@ -38,18 +38,6 @@ class LoanService:
             return Loan.objects.get(id = id)
         except Loan.DoesNotExist:
             return None
-        
-    @staticmethod
-    def update_loan(loan: Loan, **kwargs) -> Loan:
-        for key, value in kwargs.items():
-            if hasattr(loan, key):
-                if isinstance(value, str):
-                    value = UtilText.apply_trim(value)
-                elif isinstance(value, int):
-                    value = UtilNumber.ensure_positive(value)
-                setattr(loan, key, value)
-        loan.save()
-        return loan
     
     @staticmethod
     def list_all() -> list[Loan]:

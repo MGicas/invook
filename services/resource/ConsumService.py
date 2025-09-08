@@ -1,6 +1,5 @@
 from typing import Optional
-from co.edu.uco.invook.applicationcore.domain.resource import Loan, LoanStatus
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText
+from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText, UtilPatch
 from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
 
 class ConsumService:
@@ -40,7 +39,15 @@ class ConsumService:
                     value = UtilNumber.ensure_positive(value)
                 setattr(consum, key, value)
         consum.save()
-        return consum    
+        return consum   
+    
+    @staticmethod
+    def patch_consum(id: int, **kwargs) -> Consum:
+        try:
+            consum = Consum.objects.get(id = id)
+        except Consum.DoesNotExist:
+            raise ValueError(f"Consum con id '{id}' no existe.")
+        return UtilPatch.patch_model(consum, kwargs) 
         
     @staticmethod
     def list_all() -> list[Consum]:
