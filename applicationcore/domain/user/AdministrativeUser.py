@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
-import UtilText
-from co.edu.uco.invook.applicationcore.domain.user import AdministrativeUserRole, AdministrativeUserState, User
+from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
+from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserRole import AdministrativeUserRole
+from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
+from co.edu.uco.invook.applicationcore.domain.user.User import User
 
 class AdministrativeUser(User):
     username = models.CharField(max_length = 100, unique = True)
@@ -36,3 +38,4 @@ class AdministrativeUser(User):
 
     def __str__(self):
         return f"AdministrativeUser: {self._username} ({self._role})"    
+

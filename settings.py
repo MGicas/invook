@@ -50,8 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'co.edu.uco.invook.urls'
-
+ROOT_URLCONF = 'co.edu.uco.invook.adminurls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

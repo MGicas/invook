@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 
-import UtilText
+from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 
 class User(models.Model):
     id = models.CharField(max_length = 15, primary_key = True, editable = False)

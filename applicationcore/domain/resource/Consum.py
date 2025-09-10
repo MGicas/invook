@@ -1,6 +1,5 @@
 from django.db import models
 from co.edu.uco.invook.applicationcore.domain.inventory import Supply
-from co.edu.uco.invook.applicationcore.domain.resource import ConsumSupply
 from co.edu.uco.invook.applicationcore.domain.user import AdministrativeUser, Lender
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 

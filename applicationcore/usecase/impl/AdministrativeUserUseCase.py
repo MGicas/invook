@@ -8,13 +8,13 @@ class AdministrativeUserUseCase(GeneralUseCase):
     def create(self, **kwargs) -> AdministrativeUser:
         return AdministrativeUserService.create_administrative_user(**kwargs)
 
-    def get(self, id: int) -> AdministrativeUser:
+    def get(self, id: str) -> AdministrativeUser:
         return AdministrativeUserService.get(id)
 
-    def patch(self, id: int, **kwargs):
+    def patch(self, id: str, **kwargs):
         return AdministrativeUserService.patch_administrative_user(id, **kwargs)
 
-    def delete(self, id: int) -> None:
+    def delete(self, id: str) -> None:
         admin_user = AdministrativeUserService.get(id)
         if admin_user:
             AdministrativeUserService.delete_administrative_user(admin_user)
@@ -22,25 +22,25 @@ class AdministrativeUserUseCase(GeneralUseCase):
     def list_all(self) -> list[AdministrativeUser]:
         return AdministrativeUserService.list_all()
     
-    def mark_unactive(self, id: int) -> AdministrativeUser:
+    def mark_unactive(self, id: str) -> AdministrativeUser:
         admin_user = AdministrativeUserService.get(id)
         if admin_user:
             return AdministrativeUserService.mark_unactive(admin_user)
         return None
     
-    def mark_active(self, id: int) -> AdministrativeUser:
+    def mark_active(self, id: str) -> AdministrativeUser:
         admin_user = AdministrativeUserService.get(id)
         if admin_user:
             return AdministrativeUserService.mark_active(admin_user)
         return None
     
-    def update(self, id: int, **kwargs) -> AdministrativeUser:
+    def update(self, id: str, **kwargs) -> AdministrativeUser:
         admin_user = AdministrativeUserService.get(id)
         if admin_user:
             return AdministrativeUserService.update_administrative_user(admin_user, **kwargs)
         return None
     
-    def change_password(self, id: int, new_password: str) -> AdministrativeUser:
+    def change_password(self, id: str, new_password: str) -> AdministrativeUser:
         admin_user = AdministrativeUserService.get(id)
         if admin_user:
             hashed_password = make_password(new_password)

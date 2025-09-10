@@ -1,9 +1,10 @@
 from django.db import models
-import UtilNumber
-from co.edu.uco.invook.applicationcore.domain.resource import Consum, Supply
+from co.edu.uco.invook.applicationcore.domain.resource import Consum
+from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
+from co.edu.uco.invook.applicationcore.domain.inventory import Supply
 
 class ConsumSupply(models.Model):
-    consum = models.ForeignKey('Consum', on_delete=models.CASCADE)  
+    consum = models.ForeignKey(Consum, on_delete=models.CASCADE)  
     supply = models.ForeignKey(Supply, on_delete=models.CASCADE)  
     quantity = models.IntegerField() 
 

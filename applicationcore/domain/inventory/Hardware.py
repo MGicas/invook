@@ -1,5 +1,5 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory import HardwareType
+from co.edu.uco.invook.applicationcore.domain.inventory.HardwareType import HardwareType
 from co.edu.uco.invook.applicationcore.domain.inventory.HardwareState import HardwareState
 from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText

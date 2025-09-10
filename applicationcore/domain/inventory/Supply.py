@@ -1,5 +1,5 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory import SupplyType
+from co.edu.uco.invook.applicationcore.domain.inventory.SupplyType import SupplyType
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
 

@@ -1,10 +1,15 @@
 from rest_framework import serializers
 
-class ConsumSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    count = serializers.IntegerField()
-    rfid_lender = serializers.CharField(max_length=100)
-    id_lender = serializers.CharField(max_length=100)
-    id_monitor = serializers.CharField(max_length=100)
-    code_supply = serializers.CharField(max_length=100)
-    quantity = serializers.IntegerField()
+from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
+from co.edu.uco.invook.userinterface.api.serializers.AdministrativeUserSerializer import AdministrativeUserSerializer
+from co.edu.uco.invook.userinterface.api.serializers.ConsumSupplySerializer import ConsumSupplySerializer
+from co.edu.uco.invook.userinterface.api.serializers.LenderSerializer import LenderSerializer
+
+class ConsumSerializer(serializers.ModelSerializer):
+    id_lender = LenderSerializer(read_only=True)
+    id_monitor = AdministrativeUserSerializer(read_only=True)
+    supplies = ConsumSupplySerializer(source='consumsupply_set', many=True, read_only=True)
+
+    class Meta:
+        model = Consum
+        fields = ['id', 'id_lender', 'id_monitor', 'quantity', 'supplies']
