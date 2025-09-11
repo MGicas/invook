@@ -1,6 +1,6 @@
 import datetime
 from typing import Optional
-from UtilPatch import UtilPatch
+from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
 from co.edu.uco.invook.applicationcore.domain.inventory.Hardware import Hardware
 from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
 from co.edu.uco.invook.applicationcore.domain.resource.Loan import Loan, LoanStatus

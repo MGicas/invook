@@ -14,6 +14,9 @@ class HardwareType(models.Model):
         
         super().save(*args, **kwargs)
 
+    class Meta:
+        app_label = "invook"
+
     def __str__(self):
         return self.name
     

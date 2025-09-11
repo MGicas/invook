@@ -1,7 +1,7 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.resource import Consum
+from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
 from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
-from co.edu.uco.invook.applicationcore.domain.inventory import Supply
+from co.edu.uco.invook.applicationcore.domain.inventory.Supply import Supply
 
 class ConsumSupply(models.Model):
     consum = models.ForeignKey(Consum, on_delete=models.CASCADE)  
@@ -9,7 +9,8 @@ class ConsumSupply(models.Model):
     quantity = models.IntegerField() 
 
     class Meta:
-        unique_together = ('consum', 'supply') 
+        unique_together = ('consum', 'supply')
+        app_label = "invook" 
 
     def save(self, *args, **kwargs):
         self.quantity = UtilNumber.ensure_positive(self.quantity)

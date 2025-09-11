@@ -28,6 +28,4 @@ class ConsumController(APIView):
         serializer = ConsumSerializer(consum)
         return Response(serializer.data)
 
-    def delete(self, request, consum_id):
-        self.facade.delete_consum(consum_id)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+

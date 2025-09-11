@@ -66,9 +66,8 @@ class InventoryFacade(ABC):
         pass    
 
     @abstractmethod
-    def delete_consum(self, identifier):
-        pass    
-
+    def list_all_consums(self):
+        pass
 
     #Loan
     @abstractmethod

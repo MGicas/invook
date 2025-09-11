@@ -1,7 +1,6 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory import Hardware
 from co.edu.uco.invook.crosscutting.util import UtilText
-from co.edu.uco.invook.applicationcore.domain.resource import LoanStatus
+from co.edu.uco.invook.applicationcore.domain.resource.LoanStatus import LoanStatus
 
 class Loan(models.Model): 
     id = models.CharField(max_length = 40, primary_key = True, editable = False)
@@ -15,7 +14,7 @@ class Loan(models.Model):
         default = LoanStatus.ABIERTO.name
     )
 
-    hardware = models.ManyToManyField(Hardware, through = 'LoanHardware', related_name = 'loans')
+    hardware = models.ManyToManyField('invook.Hardware', through = 'LoanHardware', related_name = 'loans')
 
     def save(self, *args, **kwargs):
         self.id = UtilText.apply_trim(self.id)
@@ -24,7 +23,9 @@ class Loan(models.Model):
         
         super().save(*args, **kwargs)
 
-
+    class Meta:
+        app_label = "invook"
+        
     def __str__(self):
         return f"Loan {self.id} - {self.status}"
     

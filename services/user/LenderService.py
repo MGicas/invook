@@ -1,19 +1,19 @@
 from typing import Optional
-from UtilPatch import UtilPatch
-from UtilText import UtilText
+from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
+from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 from co.edu.uco.invook.applicationcore.domain.user.Lender import Lender
 
 class LenderService:
     
     @staticmethod
-    def create_lender(rfid, names, surnames, email, phone, state):
+    def create_lender(id, rfid, names, surnames, email, phone):
         lender = Lender.objects.create(
+            id = id,
             rfid = rfid,
             names = names,
             surnames = surnames,
             email = email,
-            phone = phone,
-            state = state
+            phone = phone
         )
 
         lender.save()

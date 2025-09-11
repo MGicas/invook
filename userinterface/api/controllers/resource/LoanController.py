@@ -29,11 +29,6 @@ class LoanController(APIView):
         serializer = LoanSerializer(loan)
         return Response(serializer.data)
 
-    def delete(self, request, loan_id):
-        self.facade.delete_loan(loan_id)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    # Acciones especiales
     def post_partial_return(self, request, loan_id):
         serials = request.data.get('serials', [])
         loan = self.facade.partial_return_hardware(loan_id, serials)

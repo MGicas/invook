@@ -21,6 +21,9 @@ class Supply(models.Model):
         self.stock = self.count * self.quantity
         
         super().save(*args, **kwargs)
+
+    class Meta:
+        app_label = "invook"
         
     def __str__(self):
         return f"Supply {self.code} - {self.name} - {self.stock}"

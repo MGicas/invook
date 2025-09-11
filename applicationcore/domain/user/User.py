@@ -25,6 +25,7 @@ class User(models.Model):
 
     class Meta:
         abstract = True
+        app_label = "invook"
 
     def __str__(self):
         return self._id

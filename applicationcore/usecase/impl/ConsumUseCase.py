@@ -5,7 +5,7 @@ from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import Da
 from co.edu.uco.invook.services.resource.ConsumService import ConsumService
 
 
-class ConsumUseCase(GeneralUseCase):
+class ConsumUseCase():
     def create(self, **kwargs) -> Consum:
         idLender = kwargs.get("idLender")
         idMonitor = kwargs.get("idMonitor")

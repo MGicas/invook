@@ -14,7 +14,7 @@ class HardwareController(APIView):
             serializer = HardwareSerializer(hw)
             return Response(serializer.data)
         else:
-            all_hw = self.facade.list_all_hardware()
+            all_hw = self.facade.list_all_hardwares()
             serializer = HardwareSerializer(all_hw, many=True)
             return Response(serializer.data)
 

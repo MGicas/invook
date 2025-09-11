@@ -29,6 +29,9 @@ class Hardware(models.Model):
         self.comment = UtilText.apply_trim(self.comment)
         
         super().save(*args, **kwargs)
+
+    class Meta:
+        app_label = "invook"
         
     def __str__(self):
         return f"Hardware {self.serial} - {self.name} - {self._state} - {self.available}"

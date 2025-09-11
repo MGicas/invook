@@ -5,7 +5,7 @@ from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import Da
 from co.edu.uco.invook.services.resource.ConsumService import ConsumService
 from co.edu.uco.invook.services.resource.LoanService import LoanService
 
-class LoanUseCase(GeneralUseCase):
+class LoanUseCase():
     
     def create(self, **kwargs) -> Loan:
         idLender = kwargs.get("idLender")

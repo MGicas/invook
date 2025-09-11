@@ -1,5 +1,5 @@
 from typing import Optional
-from UtilPatch import UtilPatch
+from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
 from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
 from co.edu.uco.invook.applicationcore.domain.user.User import User
 from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import AdministrativeUserNotFoundException, InvalidPasswordException

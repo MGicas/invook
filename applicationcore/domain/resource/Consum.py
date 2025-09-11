@@ -1,6 +1,6 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory import Supply
-from co.edu.uco.invook.applicationcore.domain.user import AdministrativeUser, Lender
+from co.edu.uco.invook.applicationcore.domain.user.Lender import Lender
+from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUser import AdministrativeUser
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 
 class Consum(models.Model):
@@ -8,12 +8,15 @@ class Consum(models.Model):
     id_lender = models.ForeignKey(Lender, on_delete = models.CASCADE)
     id_monitor = models.ForeignKey(AdministrativeUser, on_delete = models.CASCADE)
 
-    supplies = models.ManyToManyField(Supply, through = 'ConsumSupply', related_name = 'consumed_supplies')
+    supplies = models.ManyToManyField('invook.Supply', through = 'ConsumSupply', related_name = 'consumed_supplies')
 
     def save(self, *args, **kwargs):
         self.id = UtilText.apply_trim(self.id)
         
         super().save(*args, **kwargs)
+
+    class Meta:
+        app_label = "invook"
 
 
     def __str__(self):

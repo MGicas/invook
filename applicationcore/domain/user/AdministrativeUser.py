@@ -5,7 +5,7 @@ from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserRole import
 from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
 from co.edu.uco.invook.applicationcore.domain.user.User import User
 
-class AdministrativeUser(User):
+class AdministrativeUser(User, models.Model):
     username = models.CharField(max_length = 100, unique = True)
     password = models.CharField(max_length = 100)
     state = models.CharField(
@@ -23,6 +23,7 @@ class AdministrativeUser(User):
         indexes = [
             models.Index(fields =['username']),
         ]
+        app_label = "invook"
     
     def save(self, *args, **kwargs):
         self._username = UtilText.apply_trim(self._username)
