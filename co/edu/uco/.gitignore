@@ -1,0 +1,11 @@
+venv/
+env/
+*.log
+*.pot
+*.pyc
+__pycache__/
+.vscode/
+*.bak
+*.swp
+*.egg
+*.egg-info/
