@@ -1,6 +1,6 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory.Hardware import Hardware
-from co.edu.uco.invook.applicationcore.domain.resource.Loan import Loan
+from ..inventory.Hardware import Hardware
+from .Loan import Loan
 
 class LoanHardware(models.Model):
     loan = models.ForeignKey(Loan, on_delete = models.CASCADE)

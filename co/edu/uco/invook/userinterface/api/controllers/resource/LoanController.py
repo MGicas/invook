@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-from co.edu.uco.invook.applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacadeImpl
-from co.edu.uco.invook.userinterface.api.serializers.LoanSerializer import LoanSerializer
+from .....applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacadeImpl
+from ...serializers.LoanSerializer import LoanSerializer
 
 class LoanController(APIView):
     facade = InventoryFacadeImpl()
@@ -39,3 +39,10 @@ class LoanController(APIView):
         loan = self.facade.close_loan(loan_id)
         serializer = LoanSerializer(loan)
         return Response(serializer.data)
+
+    def post_hardware(self, request, loan_id):
+        loan_hardware = self.facade.add_hardware_to_loan(
+                loan_id=loan_id,
+                serialHardware=request.data.get('serialHardware')
+            )
+        return Response({"message": "Hardware agregado al préstamo exitosamente."}, status=status.HTTP_200_OK)

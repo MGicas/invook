@@ -1,6 +1,6 @@
 from django.db.models import Model
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
-from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
+from .UtilText import UtilText
+from .UtilNumber import UtilNumber
 
 class UtilPatch:
 

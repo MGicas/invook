@@ -1,10 +1,10 @@
 from typing import Optional
 from django.db import IntegrityError, DatabaseError
-from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
-from co.edu.uco.invook.crosscutting.util import UtilPatch, UtilText
-from co.edu.uco.invook.applicationcore.domain.inventory.Hardware import Hardware
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException
+from ...applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
+from ...crosscutting.util import UtilPatch, UtilText
+from ...applicationcore.domain.inventory.Hardware import Hardware
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException
 
 class HardwareService:
 
@@ -74,23 +74,18 @@ class HardwareService:
             raise DatabaseOperationException("Error al eliminar hardware en la base de datos") from e
 
     @staticmethod
-    def mark_unavailable(hw: Hardware) -> Hardware:
+    def toggle_availability(hw: Hardware) -> Hardware:
         try:
-            hw.available = HardwareAvailable.NO_DISPONIBLE.value
+            if hw.available == HardwareAvailable.DISPONIBLE.value:
+                hw.available = HardwareAvailable.NO_DISPONIBLE.value
+            else:
+                hw.available = HardwareAvailable.DISPONIBLE.value
+
             hw.save()
             return hw
         except DatabaseError as e:
             raise DatabaseOperationException("Error al marcar hardware como no disponible") from e
 
-    @staticmethod
-    def mark_available(hw: Hardware) -> Hardware:
-        try:
-            hw.available = HardwareAvailable.DISPONIBLE.value
-            hw.save()
-            return hw
-        except DatabaseError as e:
-            raise DatabaseOperationException("Error al marcar hardware como disponible") from e
-   
     @staticmethod
     def list_all() -> list[Hardware]:
         try:

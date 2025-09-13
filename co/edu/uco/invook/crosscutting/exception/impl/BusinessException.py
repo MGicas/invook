@@ -1,4 +1,4 @@
-from co.edu.uco.invook.crosscutting.exception.ExceptionsBase import ExceptionsBase
+from ....crosscutting.exception.ExceptionsBase import ExceptionsBase
 
 #General exceptions
 class DatabaseConnectionException(ExceptionsBase):

@@ -1,23 +1,35 @@
 from typing import Optional
-from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
-from co.edu.uco.invook.applicationcore.domain.user.User import User
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import AdministrativeUserNotFoundException, InvalidPasswordException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUser import AdministrativeUser
+from ...crosscutting.util.UtilPatch import UtilPatch
+from ...applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
+from ...applicationcore.domain.user.User import User
+from ...crosscutting.exception.impl.BusinessException import AdministrativeUserNotFoundException, InvalidPasswordException
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.util.UtilText import UtilText
+from ...applicationcore.domain.user.AdministrativeUser import AdministrativeUser
 from django.contrib.auth.hashers import make_password, check_password
 
 class AdministrativeUserService:
 
     @staticmethod
-    def create_administrative_user(username, password, state, role):
+    def create_administrative_user(id, rfid, names, surnames, email, phone, username, password, state, role):
         
         try:
+            id = UtilText.apply_trim(id)
+            rfid = UtilText.apply_trim(rfid)
+            names = UtilText.apply_trim(names)
+            surnames = UtilText.apply_trim(surnames)
+            email = UtilText.apply_trim(email)
+            phone = UtilText.apply_trim(phone)
             username = UtilText.apply_trim(username)
             role = UtilText.apply_trim(role)
         
             admin_user = AdministrativeUser.objects.create(
+                id = id,
+                rfid = rfid,
+                names = names,
+                surnames = surnames,
+                email = email,
+                phone = phone,
                 username = username,
                 password=make_password(password),
                 state = state,

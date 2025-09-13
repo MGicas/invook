@@ -1,6 +1,6 @@
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUser import AdministrativeUser
-from co.edu.uco.invook.applicationcore.usecase.GeneralUsecase import GeneralUseCase
-from co.edu.uco.invook.services.user.AdministrativeUserService import AdministrativeUserService
+from ...domain.user.AdministrativeUser import AdministrativeUser
+from ...usecase.GeneralUsecase import GeneralUseCase
+from ....services.user.AdministrativeUserService import AdministrativeUserService
 from django.contrib.auth.hashers import make_password
 
 class AdministrativeUserUseCase(GeneralUseCase):

@@ -1,6 +1,6 @@
-from co.edu.uco.invook.applicationcore.domain.user.Lender import Lender
-from co.edu.uco.invook.applicationcore.usecase.GeneralUsecase import GeneralUseCase
-from co.edu.uco.invook.services.user.LenderService import LenderService
+from ...domain.user.Lender import Lender
+from ...usecase.GeneralUsecase import GeneralUseCase
+from ....services.user.LenderService import LenderService
         
 class LenderUseCase(GeneralUseCase):
     def create(self, **kwargs) -> Lender:

@@ -1,7 +1,7 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
-from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
-from co.edu.uco.invook.applicationcore.domain.inventory.Supply import Supply
+from .Consum import Consum
+from ....crosscutting.util.UtilNumber import UtilNumber
+from ..inventory.Supply import Supply
 
 class ConsumSupply(models.Model):
     consum = models.ForeignKey(Consum, on_delete=models.CASCADE)  

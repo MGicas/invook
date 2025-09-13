@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from co.edu.uco.invook.applicationcore.domain.resource.Loan import Loan
-from co.edu.uco.invook.userinterface.api.serializers.AdministrativeUserSerializer import AdministrativeUserSerializer
-from co.edu.uco.invook.userinterface.api.serializers.LenderSerializer import LenderSerializer
-from co.edu.uco.invook.userinterface.api.serializers.LoanHardwareSerializer import LoanHardwareSerializer
+from ....applicationcore.domain.resource.Loan import Loan
+from .AdministrativeUserSerializer import AdministrativeUserSerializer
+from .LenderSerializer import LenderSerializer
+from .LoanHardwareSerializer import LoanHardwareSerializer
 
 class LoanSerializer(serializers.ModelSerializer):
     id_lender = LenderSerializer(read_only=True)

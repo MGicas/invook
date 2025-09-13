@@ -1,33 +1,41 @@
 import datetime
 from typing import Optional
-from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
-from co.edu.uco.invook.applicationcore.domain.inventory.Hardware import Hardware
-from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
-from co.edu.uco.invook.applicationcore.domain.resource.Loan import Loan, LoanStatus
-from co.edu.uco.invook.applicationcore.domain.resource.LoanStatus import LoanStatus
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import BusinessException, LoanAlreadyClosedException, LoanNotFoundException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText
+
+from ...applicationcore.domain.resource.LoanHardware import LoanHardware
+from ...applicationcore.domain.user.AdministrativeUser import AdministrativeUser
+from ...applicationcore.domain.user.Lender import Lender
+from ...crosscutting.util.UtilPatch import UtilPatch
+from ...applicationcore.domain.inventory.Hardware import Hardware
+from ...applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
+from ...applicationcore.domain.resource.Loan import Loan, LoanStatus
+from ...applicationcore.domain.resource.LoanStatus import LoanStatus
+from ...crosscutting.exception.impl.BusinessException import BusinessException, LoanAlreadyClosedException, LoanNotFoundException
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.util.UtilText import UtilText
 
 class LoanService:
     @staticmethod
-    def create_loan(self, count, rfidLender, idLender, idMonitor, serialHardware, loanDate, returnDate, status):
+    def create_loan(id_lender, id_monitor, serial_hardware, loan_date, return_date, status):
         try:
-            rfidLender = UtilText.apply_trim(rfidLender)
-            idLender = UtilText.apply_trim(idLender)
-            idMonitor = UtilText.apply_trim(idMonitor)
-            serialHardware = UtilText.apply_trim(serialHardware)
-            count = UtilNumber.ensure_positive(count)
+            lender = Lender.objects.get(id=lender)
+            monitor = AdministrativeUser.objects.get(id=id_monitor)
+            hardware = Hardware.objects.get(serial=serial_hardware)
             
             loan = Loan.objects.create(
-                _rfidLender = rfidLender,
-                _idLender = idLender,
-                _idMonitor = idMonitor,
-                _serialHardware = serialHardware,
-                _loanDate = loanDate,
-                _returnDate = returnDate,
-                _status = status
+                id_lender = lender,
+                id_monitor = monitor,
+                loan_date = loan_date,
+                return_date = return_date,
+                status = status
             )
+
+            loan.save()
+
+            LoanHardware.objects.create(
+                loan=loan,
+                hardware=hardware
+            )
+            
             return loan
         except Exception as e:
             raise DatabaseOperationException("Error al crear el préstamo en la base de datos.") from e
@@ -39,7 +47,7 @@ class LoanService:
             if loan._status == LoanStatus.CERRADO.value:
                 raise LoanAlreadyClosedException(loan_id)
 
-            loan._status = LoanStatus.CERRADO.value
+            loan.status = LoanStatus.CERRADO.value
             loan.save()
             return loan
 
@@ -91,6 +99,27 @@ class LoanService:
             raise
         except Exception as e:
             raise DatabaseOperationException("Error al realizar la devolución parcial en la base de datos.") from e
+
+    @staticmethod
+    def add_hardware_to_loan(loan_id: str, serialHardware: str) -> LoanHardware:
+        try:
+            loan = Loan.objects.get(id=loan_id)
+            hardware = Hardware.objects.get(serial=serialHardware)
+
+            loan_hardware, created = LoanHardware.objects.get_or_create(
+                loan=loan,
+                hardware=hardware
+            )
+
+            return loan_hardware
+
+        except Loan.DoesNotExist:
+            raise LoanNotFoundException(f"Préstamo con id {loan_id} no encontrado.")
+        except Hardware.DoesNotExist:
+            raise LoanNotFoundException(f"Hardware con serial {serialHardware} no encontrado.")
+        except DatabaseOperationException as e:
+            raise DatabaseOperationException("Error al asociar hardware con préstamo.") from e
+
     
     @staticmethod
     def get(id: int) -> Optional[Loan]:

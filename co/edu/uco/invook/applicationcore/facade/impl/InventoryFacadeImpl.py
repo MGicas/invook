@@ -1,8 +1,8 @@
-from co.edu.uco.invook.applicationcore.facade.InventoryFacade import InventoryFacade
-from co.edu.uco.invook.applicationcore.usecase.impl.HardwareUseCase import HardwareUseCase
-from co.edu.uco.invook.applicationcore.usecase.impl.SupplyUseCase import SupplyUseCase
-from co.edu.uco.invook.applicationcore.usecase.impl.ConsumUseCase import ConsumUseCase
-from co.edu.uco.invook.applicationcore.usecase.impl.LoanUseCase import LoanUseCase
+from ..InventoryFacade import InventoryFacade
+from ...usecase.impl.HardwareUseCase import HardwareUseCase
+from ...usecase.impl.SupplyUseCase import SupplyUseCase
+from ...usecase.impl.ConsumUseCase import ConsumUseCase
+from ...usecase.impl.LoanUseCase import LoanUseCase
 
 
 class InventoryFacadeImpl(InventoryFacade):
@@ -28,6 +28,9 @@ class InventoryFacadeImpl(InventoryFacade):
 
     def list_all_hardwares(self):
         return self.hardware_uc.list_all()
+
+    def toggle_availability(self, serial: str):
+        return self.hardware_uc.toggle_availability(serial)
 
 
     #Supply
@@ -85,5 +88,8 @@ class InventoryFacadeImpl(InventoryFacade):
     def return_hardware_loan(self, loan_id: str, serials: list[str]):
         loan = self.loan_uc.get(loan_id)
         return self.loan_uc.partial_return_hardware(loan, serials)
+
+    def add_hardware_to_loan(self, loan_id, seriaHardware):
+        return self.loan_uc.create(loan_id, seriaHardware)
 
     

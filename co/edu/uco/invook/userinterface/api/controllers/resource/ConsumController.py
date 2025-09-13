@@ -2,8 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-from co.edu.uco.invook.applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacadeImpl
-from co.edu.uco.invook.userinterface.api.serializers.ConsumSerializer import ConsumSerializer
+from .....applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacadeImpl
+from ...serializers.ConsumSerializer import ConsumSerializer
 
 class ConsumController(APIView):
     facade = InventoryFacadeImpl()

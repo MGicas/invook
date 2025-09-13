@@ -1,7 +1,7 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory.SupplyType import SupplyType
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
-from co.edu.uco.invook.crosscutting.util.UtilNumber import UtilNumber
+from .SupplyType import SupplyType
+from ....crosscutting.util.UtilText import UtilText
+from ....crosscutting.util.UtilNumber import UtilNumber
 
 class Supply(models.Model):
     code = models.CharField(max_length = 100, primary_key = True, editable=False)

@@ -1,8 +1,8 @@
-from co.edu.uco.invook.applicationcore.domain.inventory.Supply import Supply
-from co.edu.uco.invook.applicationcore.usecase.GeneralUsecase import GeneralUseCase
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import DuplicateSupplyCodeException, MissingFieldException, SupplyNotFoundException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.services.inventory.SupplyService import SupplyService
+from ...domain.inventory.Supply import Supply
+from ...usecase.GeneralUsecase import GeneralUseCase
+from ....crosscutting.exception.impl.BusinessException import DuplicateSupplyCodeException, MissingFieldException, SupplyNotFoundException
+from ....crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ....services.inventory.SupplyService import SupplyService
 
 class SupplyUseCase(GeneralUseCase):
     

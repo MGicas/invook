@@ -1,5 +1,5 @@
-from co.edu.uco.invook.applicationcore.facade.impl.UserFacadeImpl import UserFacadeImpl
-from co.edu.uco.invook.userinterface.api.serializers.LenderSerializer import LenderSerializer
+from .....applicationcore.facade.impl.UserFacadeImpl import UserFacadeImpl
+from ...serializers.LenderSerializer import LenderSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status

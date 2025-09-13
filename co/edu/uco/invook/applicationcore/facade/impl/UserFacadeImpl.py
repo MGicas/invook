@@ -1,6 +1,6 @@
-from co.edu.uco.invook.applicationcore.facade.UserFacade import UserFacade
-from co.edu.uco.invook.applicationcore.usecase.impl.AdministrativeUserUseCase import AdministrativeUserUseCase
-from co.edu.uco.invook.applicationcore.usecase.impl.LenderUseCase import LenderUseCase
+from ..UserFacade import UserFacade
+from ...usecase.impl.AdministrativeUserUseCase import AdministrativeUserUseCase
+from ...usecase.impl.LenderUseCase import LenderUseCase
 
 
 class UserFacadeImpl(UserFacade):

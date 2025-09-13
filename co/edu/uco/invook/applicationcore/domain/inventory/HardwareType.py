@@ -1,6 +1,6 @@
 from django.db import models
 
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
+from ....crosscutting.util.UtilText import UtilText
 
 class HardwareType(models.Model):
     id = models.CharField(max_length = 40, primary_key = True)

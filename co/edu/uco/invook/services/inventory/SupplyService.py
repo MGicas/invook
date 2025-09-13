@@ -1,10 +1,10 @@
 from typing import Optional
-from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
+from ...crosscutting.util.UtilPatch import UtilPatch
 from django.db import IntegrityError, DatabaseError
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import DuplicateSupplyCodeException, SupplyNotFoundException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText
-from co.edu.uco.invook.applicationcore.domain.inventory.Supply import Supply
+from ...crosscutting.exception.impl.BusinessException import DuplicateSupplyCodeException, SupplyNotFoundException
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.util import UtilNumber, UtilText
+from ...applicationcore.domain.inventory.Supply import Supply
 
 class SupplyService:
 

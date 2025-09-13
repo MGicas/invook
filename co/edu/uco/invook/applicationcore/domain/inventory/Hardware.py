@@ -1,11 +1,10 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.inventory.HardwareType import HardwareType
-from co.edu.uco.invook.applicationcore.domain.inventory.HardwareState import HardwareState
-from co.edu.uco.invook.applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
+from .HardwareType import HardwareType
+from .HardwareState import HardwareState
+from .HardwareAvailable import HardwareAvailable
+from ....crosscutting.util.UtilText import UtilText
 
 class Hardware(models.Model):
-
     serial = models.CharField(max_length = 50, primary_key = True, editable=False)
     name = models.CharField(max_length = 100)
     description = models.TextField()

@@ -1,8 +1,8 @@
 from typing import Optional
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import ConsumNotFoundException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.crosscutting.util import UtilNumber, UtilText, UtilPatch
-from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
+from ...crosscutting.exception.impl.BusinessException import ConsumNotFoundException
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.util import UtilNumber, UtilText, UtilPatch
+from ...applicationcore.domain.resource.Consum import Consum
 
 class ConsumService:
     @staticmethod

@@ -1,8 +1,8 @@
-from co.edu.uco.invook.applicationcore.domain.resource.Consum import Consum
-from co.edu.uco.invook.applicationcore.usecase.GeneralUsecase import GeneralUseCase
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import ConsumNotFoundException, MissingFieldException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.services.resource.ConsumService import ConsumService
+from ...domain.resource.Consum import Consum
+from ...usecase.GeneralUsecase import GeneralUseCase
+from ....crosscutting.exception.impl.BusinessException import ConsumNotFoundException, MissingFieldException
+from ....crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ....services.resource.ConsumService import ConsumService
 
 
 class ConsumUseCase():

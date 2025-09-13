@@ -1,7 +1,7 @@
 from django.db import models
-from co.edu.uco.invook.applicationcore.domain.user.Lender import Lender
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUser import AdministrativeUser
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
+from ...domain.user.Lender import Lender
+from ...domain.user.AdministrativeUser import AdministrativeUser
+from ....crosscutting.util.UtilText import UtilText
 
 class Consum(models.Model):
     id = models.CharField(max_length = 40, primary_key = True, editable=False)

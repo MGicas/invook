@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
-from co.edu.uco.invook.applicationcore.domain.user.AdministrativeUserRole import AdministrativeUserRole
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
-from co.edu.uco.invook.applicationcore.domain.user.User import User
+from .AdministrativeUserState import AdministrativeUserState
+from .AdministrativeUserRole import AdministrativeUserRole
+from ....crosscutting.util.UtilText import UtilText
+from .User import User
+from django.core.validators import RegexValidator
 
 class AdministrativeUser(User, models.Model):
     username = models.CharField(max_length = 100, unique = True)
-    password = models.CharField(max_length = 100)
+    password = models.CharField(max_length = 100)  
     state = models.CharField(
         max_length = 20,
         choices = [(state.name, state.value) for state in AdministrativeUserState],
@@ -23,7 +24,6 @@ class AdministrativeUser(User, models.Model):
         indexes = [
             models.Index(fields =['username']),
         ]
-        app_label = "invook"
     
     def save(self, *args, **kwargs):
         self._username = UtilText.apply_trim(self._username)

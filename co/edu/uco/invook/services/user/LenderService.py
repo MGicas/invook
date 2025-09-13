@@ -1,7 +1,7 @@
 from typing import Optional
-from co.edu.uco.invook.crosscutting.util.UtilPatch import UtilPatch
-from co.edu.uco.invook.crosscutting.util.UtilText import UtilText
-from co.edu.uco.invook.applicationcore.domain.user.Lender import Lender
+from ...crosscutting.util.UtilPatch import UtilPatch
+from ...crosscutting.util.UtilText import UtilText
+from ...applicationcore.domain.user.Lender import Lender
 
 class LenderService:
     

@@ -1,10 +1,11 @@
-from co.edu.uco.invook.applicationcore.domain.inventory.Hardware import Hardware
-from co.edu.uco.invook.applicationcore.usecase.GeneralUsecase import GeneralUseCase
-from co.edu.uco.invook.crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException, MissingFieldException
-from co.edu.uco.invook.crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from co.edu.uco.invook.services.inventory.HardwareService import HardwareService
+from ...domain.inventory.Hardware import Hardware
+from ...usecase.GeneralUsecase import GeneralUseCase
+from ....crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException, MissingFieldException
+from ....crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ....services.inventory.HardwareService import HardwareService
 
 class HardwareUseCase(GeneralUseCase):
+    service = HardwareService()
 
     def create(self, **kwargs) -> Hardware:
         
@@ -16,14 +17,14 @@ class HardwareUseCase(GeneralUseCase):
         if not name:
             raise MissingFieldException("name")        
         try:
-            return HardwareService.create_hardware(**kwargs)
+            return self.service.create_hardware(**kwargs)
         except DuplicateSerialException:
             raise
         except DatabaseOperationException:
             raise
 
     def get(self, serial: str) -> Hardware:
-        hw = HardwareService.get(serial)
+        hw = self.service.get(serial)
         if not hw:
             raise HardwareNotFoundException(serial)
         return hw
@@ -33,14 +34,18 @@ class HardwareUseCase(GeneralUseCase):
         if not hw:
             raise HardwareNotFoundException(serial)
 
-        return HardwareService.patch_hardware(serial, **kwargs)
+        return self.service.patch_hardware(serial, **kwargs)
 
     def delete(self, serial: str) -> None:
-        hw = HardwareService.get(serial)
+        hw = self.service.get(serial)
         if not hw:
             raise HardwareNotFoundException(serial)
 
-        HardwareService.delete_hardware(hw)
+        self.service.delete_hardware(hw)
 
     def list_all(self) -> list[Hardware]:
         return HardwareService.list_all()
+    
+    def toggle_availability(self, serial: str) -> Hardware:
+        hw = self.service.get(serial)
+        return self.service.toggle_availability(hw)
