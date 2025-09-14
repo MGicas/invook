@@ -1,4 +1,5 @@
 import datetime
+from django.db import transaction
 from typing import Optional
 
 from ...applicationcore.domain.resource.LoanHardware import LoanHardware
@@ -11,13 +12,14 @@ from ...applicationcore.domain.resource.Loan import Loan, LoanStatus
 from ...applicationcore.domain.resource.LoanStatus import LoanStatus
 from ...crosscutting.exception.impl.BusinessException import BusinessException, LoanAlreadyClosedException, LoanNotFoundException
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from ...crosscutting.util.UtilText import UtilText
+
 
 class LoanService:
     @staticmethod
+    @transaction.atomic
     def create_loan(id_lender, id_monitor, serial_hardware, loan_date, return_date, status):
         try:
-            lender = Lender.objects.get(id=lender)
+            lender = Lender.objects.get(id=id_lender)
             monitor = AdministrativeUser.objects.get(id=id_monitor)
             hardware = Hardware.objects.get(serial=serial_hardware)
             
@@ -44,9 +46,8 @@ class LoanService:
     def close_loan(loan_id):
         try:
             loan = Loan.objects.get(id=loan_id)
-            if loan._status == LoanStatus.CERRADO.value:
+            if loan.status == LoanStatus.CERRADO.value:
                 raise LoanAlreadyClosedException(loan_id)
-
             loan.status = LoanStatus.CERRADO.value
             loan.save()
             return loan
@@ -69,6 +70,7 @@ class LoanService:
         return all(hw.available == HardwareAvailable.DISPONIBLE.value for hw in hardwares)
     
     @staticmethod
+    @transaction.atomic
     def return_hardware(loan: Loan, serials_to_return: list[str]) -> Loan:
         try:
             if not LoanService.validate_loan_status(loan):
@@ -87,10 +89,9 @@ class LoanService:
                 hw.save()
 
             if LoanService.check_if_all_hardware_returned(loan):
-                LoanService.close_loan(loan.id) 
-                loan.returnDate = datetime.now()
+                loan.status = LoanStatus.CERRADO.value
+                loan.return_date = datetime.datetime.now()
                 loan.save()
-
             return loan
         
         except Loan.DoesNotExist:
@@ -110,6 +111,8 @@ class LoanService:
                 loan=loan,
                 hardware=hardware
             )
+            hardware.available = HardwareAvailable.NO_DISPONIBLE.value
+            hardware.save()
 
             return loan_hardware
 
@@ -122,7 +125,7 @@ class LoanService:
 
     
     @staticmethod
-    def get(id: int) -> Optional[Loan]:
+    def get(id: str) -> Optional[Loan]:
         try:
             return Loan.objects.get(id = id)
         except Loan.DoesNotExist:
@@ -138,7 +141,7 @@ class LoanService:
             raise DatabaseOperationException("Error al listar los préstamos en la base de datos.") from e
     
     @staticmethod
-    def patch_loan(id: int, **kwargs) -> Loan:
+    def patch_loan(id: str, **kwargs) -> Loan:
         try:
             loan = Loan.objects.get(id=id)
             return UtilPatch.patch_model(loan, kwargs)

@@ -31,7 +31,7 @@ class LoanController(APIView):
 
     def post_partial_return(self, request, loan_id):
         serials = request.data.get('serials', [])
-        loan = self.facade.partial_return_hardware(loan_id, serials)
+        loan = self.facade.return_hardware_loan(loan_id, serials)
         serializer = LoanSerializer(loan)
         return Response(serializer.data)
 

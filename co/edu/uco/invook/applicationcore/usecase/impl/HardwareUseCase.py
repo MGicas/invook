@@ -19,7 +19,7 @@ class HardwareUseCase(GeneralUseCase):
         try:
             return self.service.create_hardware(**kwargs)
         except DuplicateSerialException:
-            raise
+            raise DuplicateSerialException(serial)
         except DatabaseOperationException:
             raise
 

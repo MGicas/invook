@@ -67,17 +67,20 @@ class DuplicateLenderException(ExceptionsBase):
 #HARDWARE EXCEPTIONS
 class HardwareNotFoundException(ExceptionsBase):
     def __init__(self, serial: str):
-        super().__init__(f"Hardware with serial '{serial}' not found")
+        super().__init__(f"No hay ningun hardware con el serial {serial}")
 
 
 class InvalidHardwareTypeException(ExceptionsBase):
     def __init__(self, hw_type: str):
         super().__init__(f"Hardware type '{hw_type}' is not valid")
 
+class InvalidPatchFieldException(ExceptionsBase):
+    def __init__(self, serial: str):
+        super().__init__(serial)
 
 class DuplicateSerialException(ExceptionsBase):
     def __init__(self, serial: str):
-        super().__init__(f"Hardware with serial '{serial}' already exists")
+        super().__init__(serial)
         
 #SUPPLY EXCEPTIONS
 class SupplyNotFoundException(ExceptionsBase):

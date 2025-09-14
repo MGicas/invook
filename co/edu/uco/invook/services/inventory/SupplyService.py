@@ -5,23 +5,31 @@ from ...crosscutting.exception.impl.BusinessException import DuplicateSupplyCode
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
 from ...crosscutting.util import UtilNumber, UtilText
 from ...applicationcore.domain.inventory.Supply import Supply
+from ...applicationcore.domain.inventory.SupplyType import SupplyType
+
 
 class SupplyService:
 
     @staticmethod
     def create_supply(code, name, description, supply_type, count, quantity):
         try:
-            supply = Supply(
-                code = code,
-                name = name,
-                description = description,
-                supply_type = supply_type,
-                count = count,
-                quantity = quantity
+            supply_type_instance = SupplyType.objects.get(id=supply_type)
+
+            sup, created = Supply.objects.get_or_create(
+                code=code,
+                defaults={
+                    'name':name,
+                    'description':description,
+                    'supply_type':supply_type_instance,
+                    'count':count,
+                    'quantity':quantity,
+                }
             )
-            
-            supply.save()
-            return supply
+
+            if not created:
+                raise DuplicateSupplyCodeException(code)
+            sup.save()
+            return sup
         except IntegrityError as e:
             raise DuplicateSupplyCodeException(code) from e
         except DatabaseError as e:
@@ -67,6 +75,8 @@ class SupplyService:
     def delete_supply(supply: Supply) -> None:
         try:
             supply.delete()
+        except Supply.DoesNotExist as e:
+            raise SupplyNotFoundException(supply)
         except DatabaseError as e:
             raise DatabaseOperationException("Error al eliminar supply en la base de datos") from e
         

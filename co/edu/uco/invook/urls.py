@@ -10,8 +10,6 @@ urlpatterns = [
     path('', views.home, name='home'), 
     path('inventory/hardware/', HardwareController.as_view()),  
     path('inventory/hardware/<str:serial>/', HardwareController.as_view()),
-    path('inventory/hardware/<str:serial>/mark_available/', HardwareController.as_view(), name='patch-hardware-available'),  # PATCH marcar disponible
-    path('inventory/hardware/<str:serial>/mark_unavailable/', HardwareController.as_view(), name='patch-hardware-unavailable'),  # PATCH marcar no disponible
 
     # Supply
     path('inventory/supply/', SupplyController.as_view()),
@@ -25,7 +23,8 @@ urlpatterns = [
     path('loan/', LoanController.as_view()),
     path('loan/<str:id>/', LoanController.as_view()),
     path('loan/<str:id>/close/', LoanController.as_view()), 
-    path('loan/<str:id>/partial_return/', LoanController.as_view()), 
+    path('loan/<str:id>/partial_return/', LoanController.as_view()),
+    path('loan/<str:id>/add_hardware/', LoanController.as_view()),
     
     path('users/lenders/', LenderController.as_view(), name='create-lender'),
     path('users/lenders/<str:id>/', LenderController.as_view()),

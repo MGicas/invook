@@ -93,3 +93,7 @@ class InventoryFacade(ABC):
     @abstractmethod
     def return_hardware_loan(self, identifier, serials_to_return: list[str]):
         pass
+    
+    @abstractmethod
+    def add_hardware_to_loan(self, loan_id: str, serial_hardware: str):
+        pass

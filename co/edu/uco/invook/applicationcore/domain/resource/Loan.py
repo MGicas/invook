@@ -20,8 +20,6 @@ class Loan(models.Model):
 
     def save(self, *args, **kwargs):
         self.id = UtilText.apply_trim(self.id)
-        self.id_lender = UtilText.apply_trim(self.id_lender)
-        self.id_monitor = UtilText.apply_trim(self.id_monitor)
         
         super().save(*args, **kwargs)
 

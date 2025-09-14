@@ -1,33 +1,39 @@
 from typing import Optional
 from django.db import IntegrityError, DatabaseError
 from ...applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
-from ...crosscutting.util import UtilPatch, UtilText
+from ...crosscutting.util.UtilPatch import UtilPatch
+from ...crosscutting.util.UtilText import UtilText
 from ...applicationcore.domain.inventory.Hardware import Hardware
+from ...applicationcore.domain.inventory.HardwareType import HardwareType
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from ...crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException
+from ...crosscutting.exception.impl.BusinessException import DuplicateSerialException, HardwareNotFoundException, InvalidPatchFieldException
 
 class HardwareService:
 
     @staticmethod
     def create_hardware(serial, name, description, comment, hardware_type, state=None, available=None) -> Hardware:
-        
         try:
-            hw = Hardware(
-                serial = serial,
-                name = name,
-                description = description,
-                comment = comment,
-                hardware_type = hardware_type,
+            hw_type_instance = HardwareType.objects.get(id=hardware_type)
+
+            hw, created = Hardware.objects.get_or_create(
+                serial=serial,
+                defaults={
+                    'name': name,
+                    'description': description,
+                    'comment': comment,
+                    'hardware_type': hw_type_instance,
+                    'state': state,
+                    'available': available
+                }
             )
 
-            if state:
-                hw.state = state
-            if available:
-                hw.available = available
+            if not created:
+                raise DuplicateSerialException(serial)
 
-            hw.save()
             return hw
-        
+
+        except HardwareType.DoesNotExist:
+            raise HardwareNotFoundException(hardware_type)
         except IntegrityError as e:
             raise DuplicateSerialException(serial) from e
         except DatabaseError as e:
@@ -51,7 +57,11 @@ class HardwareService:
             raise HardwareNotFoundException(serial)
         except DatabaseError as e:
             raise DatabaseOperationException("Error al actualizar hardware en la base de datos") from e
+        if "serial" in kwargs:
+            raise InvalidPatchFieldException("No está permitido modificar el serial del hardware")
+
         return UtilPatch.patch_model(hw, kwargs)
+
     
     @staticmethod
     def update_hardware(hw: Hardware, **kwargs) -> Hardware:
@@ -69,7 +79,10 @@ class HardwareService:
     @staticmethod
     def delete_hardware(hw: Hardware) -> None:
         try:
+            HardwareService.get(hw.serial)
             hw.delete()
+        except Hardware.DoesNotExist as e:
+            raise HardwareNotFoundException(hw)
         except DatabaseError as e:
             raise DatabaseOperationException("Error al eliminar hardware en la base de datos") from e
 

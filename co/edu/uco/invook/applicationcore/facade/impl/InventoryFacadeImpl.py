@@ -50,7 +50,7 @@ class InventoryFacadeImpl(InventoryFacade):
         return self.supply_uc.list_all()
     
     def restock_supply(self, identifier, quantity):
-        return self.supply_uc.restock_supply(identifier, quantity)
+        return self.supply_uc.restock(identifier, quantity)
 
     #Consum
     def create_consum(self, **kwargs):
@@ -83,13 +83,13 @@ class InventoryFacadeImpl(InventoryFacade):
 
     def close_loan(self, loan_id: str):
         loan = self.loan_uc.get(loan_id)
-        return self.loan_uc.close_loan(loan)
+        return self.loan_uc.close_loan(loan_id)
 
     def return_hardware_loan(self, loan_id: str, serials: list[str]):
         loan = self.loan_uc.get(loan_id)
-        return self.loan_uc.partial_return_hardware(loan, serials)
+        return self.loan_uc.return_hardware_loan(loan, serials)
 
-    def add_hardware_to_loan(self, loan_id, seriaHardware):
-        return self.loan_uc.create(loan_id, seriaHardware)
+    def add_hardware_to_loan(self, loan_id: str, serial_hardware: str):
+        return self.loan_uc.add_hardware(loan_id, serial_hardware)
 
     
