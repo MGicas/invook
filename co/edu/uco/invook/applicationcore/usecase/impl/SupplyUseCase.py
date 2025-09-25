@@ -5,50 +5,23 @@ from ....crosscutting.exception.impl.TechnicalExceptions import DatabaseOperatio
 from ....services.inventory.SupplyService import SupplyService
 
 class SupplyUseCase(GeneralUseCase):
+    service = SupplyService()
     
     def create(self, **kwargs) -> Supply:
-        
-        code = kwargs.get("code")
-        name = kwargs.get("name")
-        
-        if not code:
-            raise MissingFieldException("code")
-        if not name:
-            raise MissingFieldException("name")
-        try:
-            return SupplyService.create_supply(**kwargs)
-        except DuplicateSupplyCodeException:
-            raise
-        except DatabaseOperationException:
-            raise
-
+        return self.service.create_supply(**kwargs)
+    
     def get(self, code: str) -> Supply:
-        supply = SupplyService.get(code)
-        if not supply:
-            raise SupplyNotFoundException(code)
-        return supply
+        return self.service.get(code)
 
     def patch(self, code: str, **kwargs) -> Supply:
-        supply = SupplyService.get(code)
-        if not supply:
-            raise SupplyNotFoundException(code)
-
-        return SupplyService.patch_supply(code, **kwargs)
+        return self.service.patch_supply(code, **kwargs)
 
     def delete(self, code: str) -> None:
-        supply = SupplyService.get(code)
-        if not supply:
-            raise SupplyNotFoundException(code)
-
-        SupplyService.delete_supply(supply)
+        self.service.delete_supply(code)
 
     def list_all(self) -> list[Supply]:
-        return SupplyService.list_all()
+        return self.service.list_all()
     
-    def restock(self, code: str, stock: int) -> Supply:
-        supply = SupplyService.get(code)
-        if not supply:
-            raise SupplyNotFoundException(code)
-
-        return SupplyService.restock_supply(supply, stock)
+    def restock(self, code: str, count: int, quantity: int) -> Supply:
+        return self.service.restock_supply(code, count, quantity)
     

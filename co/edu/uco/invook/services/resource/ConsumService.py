@@ -1,34 +1,79 @@
+
 from typing import Optional
-from ...crosscutting.exception.impl.BusinessException import ConsumNotFoundException
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from ...crosscutting.exception.impl.BusinessException import ConsumNotFoundException, AdministrativeUserNotFoundException, LenderNotFoundException, SupplyNotFoundException
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
-from ...crosscutting.util import UtilNumber, UtilText, UtilPatch
+from ...crosscutting.util.UtilNumber import UtilNumber
+from ...crosscutting.util.UtilText import UtilText
+from ...crosscutting.util.UtilPatch import UtilPatch
 from ...applicationcore.domain.resource.Consum import Consum
+from ...applicationcore.domain.inventory.Supply import Supply
+from ...applicationcore.domain.resource.ConsumSupply import ConsumSupply
+from ...applicationcore.domain.user.Lender import Lender
+from ...applicationcore.domain.user.AdministrativeUser import AdministrativeUser
+from ...services.inventory.SupplyService import SupplyService
+
 
 class ConsumService:
-    @staticmethod
-    def create_consum(self, count, rfidLender, idLender, idMonitor, codeSupply, quantity):
-        try:
-            rfidLender = UtilText.apply_trim(rfidLender)
-            idLender = UtilText.apply_trim(idLender)
-            idMonitor = UtilText.apply_trim(idMonitor)
-            codeSupply = UtilText.apply_trim(codeSupply)
-            count = UtilNumber.ensure_positive(count)
-            quantity = UtilNumber.ensure_positive(quantity)
-            
-            consum = Consum.objects.create(
-                count = count,
-                rfidLender = rfidLender,
-                idLender = idLender,
-                idMonitor = idMonitor,
-                codeSupply = codeSupply,
-                quantity = quantity
-            )
-            return consum
-    
-        except Exception as e:
-            raise DatabaseOperationException("Error al crear el consum en la base de datos.") from e
 
+    @staticmethod
+    def _attach_supply(consum: Consum, supply: Supply, quantity: int) -> ConsumSupply:
+        print(f"Creating ConsumSupply with quantity: {quantity}")
+        if quantity is None or quantity <= 0:
+            raise ValueError("La cantidad no puede ser nula o negativa.")
+        consum_supply = ConsumSupply.objects.create(
+            consum=consum,
+            supply=supply,
+            quantity=quantity
+        )
+        return consum_supply
     
+    @staticmethod
+    def create_consum(id_lender, id_monitor, supplies_data):
+        try:
+            with transaction.atomic():
+                lender = Lender.objects.get(id=id_lender)
+                monitor = AdministrativeUser.objects.get(id=id_monitor)
+
+                consum = Consum.objects.create(
+                    id_lender=lender,
+                    id_monitor=monitor
+                )
+
+                for item in supplies_data:
+                    supply_code= item['supply_code']
+
+                    if isinstance(supply_code, dict):
+                        supply_code = supply_code.get("code")
+
+                    quantity = item['quantity']
+
+                    try:
+                        supply = Supply.objects.get(code=supply_code)
+                    except Supply.DoesNotExist:
+                        raise SupplyNotFoundException(f"Producto con ID {supply_code} no existe")
+
+                    if supply.stock < quantity:
+                        raise ValidationError(f"No hay suficiente stock para Supply con {supply_code}")
+                    
+                    supply.stock -= quantity
+                    supply.save()
+
+                    ConsumSupply.objects.create(
+                        consum = consum,
+                        supply = supply,
+                        quantity=quantity
+                    )
+                    
+                return consum
+        except Lender.DoesNotExist:
+            raise LenderNotFoundException(f"Lender con id {id_lender} no encontrado.")
+        except AdministrativeUser.DoesNotExist:
+            raise AdministrativeUserNotFoundException(f"Monitor con id {id_monitor} no encontrado.")
+        except Supply.DoesNotExist:
+            raise ValueError("Uno de los supplies con los seriales proporcionados no existe.")
+
     @staticmethod
     def get(id: int) -> Optional[Consum]:
         try:
@@ -49,7 +94,7 @@ class ConsumService:
                         value = UtilNumber.ensure_positive(value)
                     setattr(consum, key, value)
             consum.save()
-            return consum   
+            return consum 
         except Exception as e:
             raise DatabaseOperationException("Error al actualizar el consum en la base de datos.") from e
 
@@ -57,12 +102,11 @@ class ConsumService:
     def patch_consum(id: int, **kwargs) -> Consum:
         try:
             consum = Consum.objects.get(id = id)
-        except Consum.DoesNotExist: 
-            raise ConsumNotFoundException(id)    
+        except Consum.DoesNotExist:
+            raise ConsumNotFoundException(id)
         except Exception as e:
             raise DatabaseOperationException("Error al realizar la actualización en el consum en la base de datos.") from e
-        return UtilPatch.patch_model(consum, kwargs) 
-        
+        return UtilPatch.patch_model(consum, kwargs)
     @staticmethod
     def list_all() -> list[Consum]:
         try:

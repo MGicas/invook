@@ -1,11 +1,15 @@
+from typing import Optional
 from ..InventoryFacade import InventoryFacade
 from ...usecase.impl.HardwareUseCase import HardwareUseCase
 from ...usecase.impl.SupplyUseCase import SupplyUseCase
 from ...usecase.impl.ConsumUseCase import ConsumUseCase
 from ...usecase.impl.LoanUseCase import LoanUseCase
+from ....crosscutting.exception.impl.BusinessException import BusinessException, MissingFieldException
+from ....applicationcore.domain.resource.Loan import Loan
+from ....applicationcore.domain.inventory.Supply import Supply
+from ....services.inventory.SupplyService import SupplyService
 
-
-class InventoryFacadeImpl(InventoryFacade):
+class InventoryFacadeImpl(InventoryFacade): 
 
     def __init__(self):
         self.hardware_uc = HardwareUseCase()
@@ -34,7 +38,7 @@ class InventoryFacadeImpl(InventoryFacade):
 
 
     #Supply
-    def create_supply(self, **kwargs):
+    def create_supply(self, **kwargs) -> Supply:
         return self.supply_uc.create(**kwargs)
 
     def get_supply(self, code: str):
@@ -49,12 +53,12 @@ class InventoryFacadeImpl(InventoryFacade):
     def list_all_supplies(self):
         return self.supply_uc.list_all()
     
-    def restock_supply(self, identifier, quantity):
-        return self.supply_uc.restock(identifier, quantity)
+    def restock_supply(self, code, count, quantity):
+        return self.supply_uc.restock(code, count, quantity)
 
     #Consum
-    def create_consum(self, **kwargs):
-        return self.consum_uc.create(**kwargs)
+    def create_consum(self, id_lender, id_monitor, supplies_list: list):
+        return self.consum_uc.create(id_lender, id_monitor, supplies_list)
 
     def get_consum(self, code: str):
         return self.consum_uc.get(code)
@@ -69,27 +73,25 @@ class InventoryFacadeImpl(InventoryFacade):
         return self.consum_uc.list_all()
     
     #Loan
-    def create_loan(self, **kwargs):
-        return self.loan_uc.create(**kwargs)
+    def create_loan(self, id_lender: str, id_monitor: str, serials_hardware: list[str], status: Optional[str] = None) -> Loan:
+        return self.loan_uc.create_loan(id_lender, id_monitor, serials_hardware, status)
 
-    def get_loan(self, loan_id: str):
-        return self.loan_uc.get(loan_id)
+    def get_loan(self, id: str) -> Loan:
+        return self.loan_uc.get(id)
 
-    def patch_loan(self, loan_id: str, **kwargs):
-        return self.loan_uc.patch(loan_id, **kwargs)
+    def patch_loan(self, id: str, **kwargs) -> Loan:
+        return self.loan_uc.patch(id, **kwargs)
 
-    def list_all_loans(self):
+    def close_loan(self, id: str) -> Loan:
+        return self.loan_uc.close_loan(id)
+
+    def list_all_loans(self) -> list[Loan]:
         return self.loan_uc.list_all()
 
-    def close_loan(self, loan_id: str):
-        loan = self.loan_uc.get(loan_id)
-        return self.loan_uc.close_loan(loan_id)
+    def add_hardware_to_loan(self, loan_id: str, serials_hardware: list[str]) -> Loan:
+        return self.loan_uc.add_hardware(loan_id, serials_hardware)
 
-    def return_hardware_loan(self, loan_id: str, serials: list[str]):
-        loan = self.loan_uc.get(loan_id)
-        return self.loan_uc.return_hardware_loan(loan, serials)
-
-    def add_hardware_to_loan(self, loan_id: str, serial_hardware: str):
-        return self.loan_uc.add_hardware(loan_id, serial_hardware)
+    def return_hardware_from_loan(self, loan_id: str, serials_to_return: list[str]) -> Loan:
+        return self.loan_uc.return_hardware_loan(loan_id, serials_to_return)
 
     

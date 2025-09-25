@@ -10,18 +10,8 @@ class Supply(models.Model):
     supply_type = models.ForeignKey(SupplyType, on_delete = models.CASCADE)
     count = models.IntegerField()
     quantity = models.IntegerField()
-    stock = models.IntegerField()
+    stock = models.IntegerField(default=0)
     
-    def save(self, *args, **kwargs):
-        self.code = UtilText.apply_trim(self.code)
-        self.name = UtilText.apply_trim(self.name)
-        self.description = UtilText.apply_trim(self.description)
-        self.count = UtilNumber.ensure_positive(self.count)
-        self.quantity = UtilNumber.ensure_positive(self.quantity)
-        self.stock = self.count * self.quantity
-        
-        super().save(*args, **kwargs)
-
     class Meta:
         app_label = "invook"
         

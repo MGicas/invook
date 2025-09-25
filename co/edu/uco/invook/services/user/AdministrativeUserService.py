@@ -1,9 +1,11 @@
 from typing import Optional
+from django.db import DatabaseError
 from ...crosscutting.util.UtilPatch import UtilPatch
 from ...applicationcore.domain.user.AdministrativeUserState import AdministrativeUserState
 from ...applicationcore.domain.user.User import User
 from ...crosscutting.exception.impl.BusinessException import AdministrativeUserNotFoundException, InvalidPasswordException
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.exception.impl.BusinessException import InvalidEmailException
 from ...crosscutting.util.UtilText import UtilText
 from ...applicationcore.domain.user.AdministrativeUser import AdministrativeUser
 from django.contrib.auth.hashers import make_password, check_password
@@ -12,7 +14,9 @@ class AdministrativeUserService:
 
     @staticmethod
     def create_administrative_user(id, rfid, names, surnames, email, phone, username, password, state, role):
-        
+        if not UtilText.email_string_is_valid(email):
+            raise InvalidEmailException("El correo electrónico proporcionado no tiene un formato válido.")
+    
         try:
             id = UtilText.apply_trim(id)
             rfid = UtilText.apply_trim(rfid)
@@ -37,7 +41,8 @@ class AdministrativeUserService:
             )
             # 
             admin_user.save()
-        except Exception as e:
+            return admin_user
+        except DatabaseError as e:
             raise DatabaseOperationException("Error al crear el usuario administrativo en la base de datos.") from e
     
     @staticmethod
@@ -55,8 +60,16 @@ class AdministrativeUserService:
             admin_user = AdministrativeUser.objects.get(username = username)
         except AdministrativeUser.DoesNotExist:
             raise AdministrativeUserNotFoundException(username)
-        except Exception as e:
+        except DatabaseError as e:
             raise DatabaseOperationException("Error al actualizar parcialmente el usuario administrativo.") from e
+               
+        if 'id' in kwargs:
+            raise ValueError("No se puede cambiar el ID de un usuario administrativo.")
+        if 'username' in kwargs and kwargs['username'] != admin_user.username:
+            raise ValueError("No se puede cambiar el username de un usuario administrativo.")
+        if 'email' in kwargs and not UtilText.email_string_is_valid(kwargs['email']):
+            raise InvalidEmailException("El correo electrónico proporcionado no tiene un formato válido.")
+ 
         return UtilPatch.patch_model(admin_user, kwargs)
     
     @staticmethod
@@ -73,11 +86,15 @@ class AdministrativeUserService:
             raise DatabaseOperationException("Error al actualizar el usuario administrativo.") from e
     
     @staticmethod
-    def delete_administrative_user(admin_user: AdministrativeUser) -> None:
+    def delete_administrative_user(username: str) -> None:
         try:
+            admin_user = AdministrativeUserService.get(username)
             admin_user.delete()
+        except AdministrativeUser.DoesNotExist:
+            raise AdministrativeUserNotFoundException(f"Administrative user with username '{id}' does not exist.")
         except Exception as e:
-            raise DatabaseOperationException("Error al eliminar el usuario administrativo.") from e
+           raise DatabaseOperationException("Error al eliminar el usuario administrativo.") from e
+
 
     @staticmethod
     def list_all() -> list[AdministrativeUser]:
@@ -117,3 +134,14 @@ class AdministrativeUserService:
             raise
         except Exception as e:
             raise DatabaseOperationException("Error al cambiar la contraseña del usuario administrativo.") from e
+
+    @staticmethod
+    def authenticate(username, raw_password):
+        from django.contrib.auth.hashers import check_password
+        try:
+            user = AdministrativeUser.objects.get(username=username)
+        except AdministrativeUser.DoesNotExist:
+            return None
+        if not check_password(raw_password, user.password):
+            return None
+        return user if user.state == "ACTIVO" else None

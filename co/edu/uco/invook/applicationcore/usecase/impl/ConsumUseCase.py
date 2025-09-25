@@ -6,16 +6,13 @@ from ....services.resource.ConsumService import ConsumService
 
 
 class ConsumUseCase():
-    def create(self, **kwargs) -> Consum:
-        idLender = kwargs.get("idLender")
-        idMonitor = kwargs.get("idMonitor")
-        
-        if not idLender:
-            raise MissingFieldException("idLender")
-        if not idMonitor:
-            raise MissingFieldException("idMonitor")        
+    
+    def __init__(self):
+        self.service = ConsumService()
+
+    def create(self, id_lender: str, id_monitor: str, supplies: list) -> Consum:       
         try:
-            return ConsumService.create_consum(**kwargs)
+            return self.service.create_consum(id_lender, id_monitor, supplies)
         except DatabaseOperationException:
             raise  
     

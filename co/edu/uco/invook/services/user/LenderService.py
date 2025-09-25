@@ -1,12 +1,17 @@
 from typing import Optional
+
+from django.db import DatabaseError
 from ...crosscutting.util.UtilPatch import UtilPatch
 from ...crosscutting.util.UtilText import UtilText
+from ...crosscutting.exception.impl.BusinessException import LenderNotFoundException
 from ...applicationcore.domain.user.Lender import Lender
+from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.exception.impl.BusinessException import InvalidEmailException
 
 class LenderService:
     
     @staticmethod
-    def create_lender(id, rfid, names, surnames, email, phone):
+    def create_lender(id, rfid, names, surnames, email, phone, state, role):
         lender = Lender.objects.create(
             id = id,
             rfid = rfid,
@@ -20,9 +25,9 @@ class LenderService:
         return lender
     
     @staticmethod
-    def get(rfid: str) -> Optional[Lender]:
+    def get(id: str) -> Optional[Lender]:
         try:
-            return Lender.objects.get(rfid = rfid)
+            return Lender.objects.get(id = id)
         except Lender.DoesNotExist:
             return None
         
@@ -38,16 +43,30 @@ class LenderService:
     
     @staticmethod
     def delete_lender(lender: Lender) -> None:
-        lender.delete()
-        
+        try:
+            LenderService.get(lender.id)
+            lender.delete()
+        except Lender.DoesNotExist:
+            raise LenderNotFoundException(f"Lender con id '{id}' no existe.")        
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al eliminar hardware en la base de datos") from e
+
     @staticmethod
     def list_all() -> list[Lender]:
         return list(Lender.objects.all())
     
     @staticmethod
-    def patch_lender(rfid: str, **kwargs) -> Lender:
+    def patch_lender(id: str, **kwargs) -> Lender:
         try:
-            lender = Lender.objects.get(rfid = rfid)
+            lender = Lender.objects.get(id = id)
         except Lender.DoesNotExist:
-            raise ValueError(f"Lender con rfid '{rfid}' no existe.")
+            raise LenderNotFoundException(f"Lender con id '{id}' no existe.")
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al actualizar parcialmente el usuario.") from e
+        if 'id' in kwargs:
+            raise ValueError("No se puede cambiar el ID de un usuario administrativo.")
+        if 'email' in kwargs and not UtilText.email_string_is_valid(kwargs['email']):
+            raise InvalidEmailException("El correo electrónico proporcionado no tiene un formato válido.")
+ 
+        
         return UtilPatch.patch_model(lender, kwargs)

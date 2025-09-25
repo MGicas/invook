@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from .LoanStatus import LoanStatus
 from ....crosscutting.util.UtilText import UtilText
@@ -5,11 +6,11 @@ from ..user.Lender import Lender
 from ..user.AdministrativeUser import AdministrativeUser
 
 class Loan(models.Model): 
-    id = models.CharField(max_length = 40, primary_key = True, editable = False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     id_lender = models.ForeignKey(Lender, on_delete = models.CASCADE)
     id_monitor = models.ForeignKey(AdministrativeUser, on_delete = models.CASCADE)
     loan_date = models.DateTimeField(auto_now_add = True)
-    return_date = models.DateTimeField()
+    return_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
         max_length = 20,
         choices = [(status.name, status.value) for status in LoanStatus],
@@ -17,11 +18,6 @@ class Loan(models.Model):
     )
 
     hardware = models.ManyToManyField('invook.Hardware', through = 'LoanHardware', related_name = 'loans')
-
-    def save(self, *args, **kwargs):
-        self.id = UtilText.apply_trim(self.id)
-        
-        super().save(*args, **kwargs)
 
     class Meta:
         app_label = "invook"

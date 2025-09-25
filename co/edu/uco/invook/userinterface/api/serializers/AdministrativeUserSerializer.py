@@ -10,4 +10,6 @@ class AdministrativeUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField(max_length=128, write_only=True)
+    state = serializers.CharField()
+    role= serializers.CharField()
     

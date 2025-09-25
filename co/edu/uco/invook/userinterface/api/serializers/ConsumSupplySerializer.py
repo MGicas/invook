@@ -1,9 +1,11 @@
 from ....applicationcore.domain.resource.ConsumSupply import ConsumSupply
-from .SupplySerializer import SupplySerializer
 from rest_framework import serializers
 
 class ConsumSupplySerializer(serializers.ModelSerializer):
-    supply = SupplySerializer() 
+    supply_code = serializers.CharField(write_only=True)      
+    supply = serializers.CharField(source="supply.code", read_only=True)  
+
     class Meta:
         model = ConsumSupply
-        fields = ['supply', 'quantity']
+        fields = ["supply_code", "supply", "quantity"]
+

@@ -11,11 +11,12 @@ from ...applicationcore.domain.inventory.SupplyType import SupplyType
 class SupplyService:
 
     @staticmethod
-    def create_supply(code, name, description, supply_type, count, quantity):
+    def create_supply(code, name, description, supply_type, count, quantity) -> Supply:
         try:
-            supply_type_instance = SupplyType.objects.get(id=supply_type)
+            supply_type_instance = SupplyType.objects.get(id=supply_type)  
 
-            sup, created = Supply.objects.get_or_create(
+            stock = count * quantity
+            supply, created = Supply.objects.get_or_create(
                 code=code,
                 defaults={
                     'name':name,
@@ -23,13 +24,14 @@ class SupplyService:
                     'supply_type':supply_type_instance,
                     'count':count,
                     'quantity':quantity,
-                }
+                    'stock': stock
+                } 
             )
 
             if not created:
                 raise DuplicateSupplyCodeException(code)
-            sup.save()
-            return sup
+        
+            return supply
         except IntegrityError as e:
             raise DuplicateSupplyCodeException(code) from e
         except DatabaseError as e:
@@ -88,12 +90,14 @@ class SupplyService:
             raise DatabaseOperationException("Error al listar supply en la base de datos") from e
     
     @staticmethod
-    def restock_supply(supply: Supply, additional_count: int) -> Supply:
+    def restock_supply(code: str, count: int, quantity: int) -> Supply:
         try:
-            additional_count = UtilNumber.ensure_positive(additional_count)
-            supply.count += additional_count
-            supply.stock = supply.count * supply.quantity
-            supply.save()
-            return supply
-        except DatabaseError as e:
-            raise DatabaseOperationException("Error al reabastecer supply en la base de datos") from e
+            supply = SupplyService.get(code=code)
+        except Supply.DoesNotExist:
+                raise ValueError(f"Storage con código '{code}' no existe")
+        supply.count += count
+        supply.quantity += quantity
+        supply.stock = supply.count * supply.quantity
+        supply.save()
+        return supply
+        

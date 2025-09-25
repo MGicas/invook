@@ -26,17 +26,28 @@ class SupplyController(APIView):
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
-        serializer = SupplySerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                supply = self.facade.create_supply(**serializer.validated_data)
-                return Response(SupplySerializer(supply).data, status=status.HTTP_201_CREATED)
-            except DuplicateSupplyCodeException as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            except DatabaseOperationException as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+        try:
+            supply = self.facade.create_supply(**request.data)
+            serializer = SupplySerializer(supply)
+            return Response({"message": "Hardware creado correctamente", "hardware": serializer.data},
+                            status=status.HTTP_201_CREATED
+                            )
+        except DuplicateSupplyCodeException as e:
+            return Response(
+                {"error": f"El hardware con serial '{e.args[0]}' ya existe."},
+                status=status.HTTP_409_CONFLICT
+            )
+        except SupplyNotFoundException as e:
+            return Response(
+                {"error": f"Hardware type con id '{e.args[0]}' no encontrado."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except DatabaseOperationException as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     def patch(self, request, code):
         supply = self.facade.patch_supply(code, **request.data)
         serializer = SupplySerializer(supply)

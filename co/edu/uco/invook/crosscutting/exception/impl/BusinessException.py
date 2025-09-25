@@ -21,19 +21,12 @@ class UserNotFoundException(ExceptionsBase):
         super().__init__(f"User with id '{id}' not found")
         
 class AdministrativeUserNotFoundException(ExceptionsBase):
-    """Se lanza cuando no se encuentra un admin user."""
     def __init__(self, admin_id: str):
-        super().__init__(f"Administrative user with id '{admin_id}' not found")
+        super().__init__(f"Administrative user with username '{admin_id}' not found")
 
 class AdminPermissionDeniedException(ExceptionsBase):
-    """Se lanza cuando un admin intenta realizar una acción sin permisos."""
     def __init__(self, action: str):
         super().__init__(f"Administrative user does not have permission to perform '{action}'")
-
-class DuplicateAdminEmailException(ExceptionsBase):
-    """Se lanza cuando se intenta registrar un admin con un correo ya existente."""
-    def __init__(self, email: str):
-        super().__init__(f"Administrative user with email '{email}' already exists")
 
 class InvalidEmailException(ExceptionsBase):
     def __init__(self, email: str):
@@ -68,7 +61,6 @@ class DuplicateLenderException(ExceptionsBase):
 class HardwareNotFoundException(ExceptionsBase):
     def __init__(self, serial: str):
         super().__init__(f"No hay ningun hardware con el serial {serial}")
-
 
 class InvalidHardwareTypeException(ExceptionsBase):
     def __init__(self, hw_type: str):

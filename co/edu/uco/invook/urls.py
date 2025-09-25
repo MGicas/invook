@@ -4,8 +4,11 @@ from .userinterface.api.controllers.resource.ConsumController import ConsumContr
 from .userinterface.api.controllers.resource.LoanController import LoanController   
 from .userinterface.api.controllers.user.AdministrativeUserController import AdministrativeUserController
 from .userinterface.api.controllers.user.LenderController import LenderController
+from .userinterface.api.controllers.user.LoginController import LoginController
 from . import views
 from django.urls import path
+
+
 urlpatterns = [
     path('', views.home, name='home'), 
     path('inventory/hardware/', HardwareController.as_view()),  
@@ -22,13 +25,12 @@ urlpatterns = [
     # Loan
     path('loan/', LoanController.as_view()),
     path('loan/<str:id>/', LoanController.as_view()),
-    path('loan/<str:id>/close/', LoanController.as_view()), 
-    path('loan/<str:id>/partial_return/', LoanController.as_view()),
-    path('loan/<str:id>/add_hardware/', LoanController.as_view()),
     
     path('users/lenders/', LenderController.as_view(), name='create-lender'),
     path('users/lenders/<str:id>/', LenderController.as_view()),
 
     path('users/admins/', AdministrativeUserController.as_view()),
-    path('users/admins/<str:id>/', AdministrativeUserController.as_view()),
+    path('users/admins/<str:username>/', AdministrativeUserController.as_view()),
+
+    path('login/', LoginController.as_view(), name="login"),
 ]

@@ -28,4 +28,4 @@ class User(models.Model):
         app_label = "invook"
 
     def __str__(self):
-        return self._id
+        return self.id

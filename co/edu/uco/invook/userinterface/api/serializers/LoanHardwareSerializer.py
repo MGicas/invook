@@ -1,4 +1,4 @@
-from ....applicationcore.domain.resource import LoanHardware
+from ....applicationcore.domain.resource.LoanHardware import LoanHardware
 from .HardwareSerializer import HardwareSerializer
 from .HardwareSerializer import HardwareSerializer
 from rest_framework import serializers
