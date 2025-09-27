@@ -2,6 +2,7 @@ from .....applicationcore.facade.impl.UserFacadeImpl import UserFacadeImpl
 from ...serializers.LenderSerializer import LenderSerializer
 from .....crosscutting.exception.impl.BusinessException import LenderNotFoundException
 from .....crosscutting.util.UtilText import UtilText
+from .....crosscutting.exception.impl.BusinessException import BusinessException
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -26,9 +27,12 @@ class LenderController(APIView):
             return Response(serializer.data, status= status.HTTP_200_OK)
 
     def post(self, request):
-        lender = self.facade.create_lender(**request.data)
-        serializer = LenderSerializer(lender)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            lender = self.facade.create_lender(**request.data)
+            serializer = LenderSerializer(lender)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except BusinessException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, id):
         email = request.data.get('email')

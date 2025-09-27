@@ -24,16 +24,16 @@ class UserFacadeImpl(UserFacade):
 
     #Lender
     def create_lender(self, **kwargs):
-        return self.lender_service.create(**kwargs)
+        return self.lender_service.create_lender(**kwargs)
     
     def get_lender(self, id: str):
         return self.lender_service.get(id)
     
     def patch_lender(self, id: str, **kwargs):
-        return self.lender_service.patch(id, **kwargs)
+        return self.lender_service.patch_lender(id, **kwargs)
     
     def delete_lender(self, id: str):
-        return self.lender_service.delete(id)
+        return self.lender_service.delete_lender(id)
     
     def list_all_lenders(self):
         return self.lender_service.list_all()
