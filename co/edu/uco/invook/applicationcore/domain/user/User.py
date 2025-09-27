@@ -18,8 +18,7 @@ class User(models.Model):
         self.rfid = UtilText.apply_trim(self.rfid)
         self.names = UtilText.apply_trim(self.names)
         self.surnames = UtilText.apply_trim(self.surnames)
-        self.email = UtilText.apply_trim(self.email)
-        self.phone = UtilText.apply_trim(self.phone)
+
         
         super().save(*args, **kwargs)
 

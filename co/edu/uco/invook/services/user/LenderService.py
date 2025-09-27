@@ -11,7 +11,8 @@ from ...crosscutting.exception.impl.BusinessException import InvalidEmailExcepti
 class LenderService:
     
     @staticmethod
-    def create_lender(id, rfid, names, surnames, email, phone, state, role):
+    def create_lender(id, rfid, names, surnames, email, phone):
+        
         lender = Lender.objects.create(
             id = id,
             rfid = rfid,
