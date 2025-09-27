@@ -18,16 +18,16 @@ class InventoryFacadeImpl(InventoryFacade):
 
     #Hardware
     def create_hardware(self, **kwargs):
-        return self.hardware_service.create(**kwargs)
+        return self.hardware_service.create_hardware(**kwargs)
 
     def get_hardware(self, serial: str):
         return self.hardware_service.get(serial)
 
     def patch_hardware(self, serial: str, **kwargs):
-        return self.hardware_service.patch(serial, **kwargs)
+        return self.hardware_service.patch_hardware(serial, **kwargs)
 
     def delete_hardware(self, serial: str):
-        return self.hardware_service.delete(serial)
+        return self.hardware_service.delete_hardware(serial)
 
     def list_all_hardwares(self):
         return self.hardware_service.list_all()
@@ -38,35 +38,35 @@ class InventoryFacadeImpl(InventoryFacade):
 
     #Supply
     def create_supply(self, **kwargs) -> Supply:
-        return self.supply_service.create(**kwargs)
+        return self.supply_service.create_supply(**kwargs)
 
     def get_supply(self, code: str):
         return self.supply_service.get(code)
 
     def patch_supply(self, code: str, **kwargs):
-        return self.supply_service.patch(code, **kwargs)
+        return self.supply_service.patch_supply(code, **kwargs)
 
     def delete_supply(self, code: str):
-        return self.supply_service.delete(code)
+        return self.supply_service.delete_supply(code)
 
     def list_all_supplies(self):
         return self.supply_service.list_all()
     
     def restock_supply(self, code, count, quantity):
-        return self.supply_service.restock(code, count, quantity)
+        return self.supply_service.restock_supply(code, count, quantity)
 
     #Consum
     def create_consum(self, id_lender, id_monitor, supplies_list: list):
-        return self.consum_service.create(id_lender, id_monitor, supplies_list)
+        return self.consum_service.create_consum(id_lender, id_monitor, supplies_list)
 
     def get_consum(self, code: str):
         return self.consum_service.get(code)
 
     def patch_consum(self, code: str, **kwargs):
-        return self.consum_service.patch(code, **kwargs)
+        return self.consum_service.patch_consum(code, **kwargs)
     
     def update_consum(self, identifier, **kwargs):
-        return self.consum_service.update(identifier, **kwargs)
+        return self.consum_service.update_consum(identifier, **kwargs)
 
     def list_all_consums(self):
         return self.consum_service.list_all()
@@ -79,7 +79,7 @@ class InventoryFacadeImpl(InventoryFacade):
         return self.loan_service.get(id)
 
     def patch_loan(self, id: str, **kwargs) -> Loan:
-        return self.loan_service.patch(id, **kwargs)
+        return self.loan_service.patch_loan(id, **kwargs)
 
     def close_loan(self, id: str) -> Loan:
         return self.loan_service.close_loan(id)
@@ -88,9 +88,9 @@ class InventoryFacadeImpl(InventoryFacade):
         return self.loan_service.list_all()
 
     def add_hardware_to_loan(self, loan_id: str, serials_hardware: list[str]) -> Loan:
-        return self.loan_service.add_hardware(loan_id, serials_hardware)
+        return self.loan_service.add_hardware_to_loan(loan_id, serials_hardware)
 
     def return_hardware_from_loan(self, loan_id: str, hardware_returns: list[dict]) -> Loan:
-        return self.loan_service.return_hardware_loan(loan_id, hardware_returns)
+        return self.loan_service.return_hardware(loan_id, hardware_returns)
 
     

@@ -104,8 +104,9 @@ class LoanService:
      
     @staticmethod
     @transaction.atomic
-    def return_hardware(loan: Loan, hardware_returns: list[dict]) -> Loan:
+    def return_hardware(id: str, hardware_returns: list[dict]) -> Loan:
         try:
+            loan = Loan.objects.get(id=id)
             if not LoanService.validate_loan_status(loan):
                 raise LoanAlreadyClosedException(loan.id)
 
@@ -124,7 +125,14 @@ class LoanService:
                 if not state or state not in HardwareState.__members__:
                     raise BusinessException(f"Estado inválido para el hardware {serial}: {state}")
 
-                lh = loan_hardwares[serial]
+                lh = LoanHardware.objects.filter(loan=loan, hardware__serial=serial).first()
+
+                if not lh:
+                    raise BusinessException(f"El hardware {serial} no está registrado en este préstamo")
+
+                if lh.returned_at:
+                    raise BusinessException(f"El hardware {serial} ya fue devuelto previamente")
+
                 lh.returned_at = timezone.localtime(timezone.now())
                 lh.return_state = state
                 lh.save()
@@ -148,6 +156,7 @@ class LoanService:
         except BusinessException:
             raise
         except Exception as e:
+            logger.exception("Excepción al devolver hardware: %s", e)
             raise DatabaseOperationException("Error al realizar la devolución parcial en la base de datos.") from e
 
     @staticmethod
@@ -158,7 +167,34 @@ class LoanService:
                 raise LoanAlreadyClosedException(loan.id)
 
             for serial in serials_hardware:
-                LoanService._attach_hardware(loan, serial)
+                try:
+                    hardware = Hardware.objects.get(serial=serial)
+                except Hardware.DoesNotExist:
+                    raise HardwareNotFoundException(f"Hardware con serial {serial} no encontrado.")
+
+                # Buscar si ya existe LoanHardware para este loan y hardware
+                loan_hardware = LoanHardware.objects.filter(loan=loan, hardware=hardware).first()
+
+                if loan_hardware:
+                    # Si ya existe y fue devuelto, lo reutilizamos
+                    if loan_hardware.returned_at is not None:
+                        loan_hardware.returned_at = None
+                        loan_hardware.return_state = None
+                        loan_hardware.loaned_at = timezone.localtime(timezone.now())
+                        loan_hardware.save()
+                    else:
+                        raise BusinessException(f"El hardware {serial} ya está actualmente en préstamo en este loan.")
+                else:
+                    # Si nunca estuvo en este loan, lo creamos
+                    LoanHardware.objects.create(
+                        loan=loan,
+                        hardware=hardware,
+                        loaned_at=timezone.localtime(timezone.now())
+                    )
+
+                # Actualizar disponibilidad del hardware
+                hardware.available = HardwareAvailable.NO_DISPONIBLE.value
+                hardware.save()
 
             return loan
 
