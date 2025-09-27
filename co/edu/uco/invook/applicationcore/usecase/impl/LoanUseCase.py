@@ -37,10 +37,11 @@ class LoanUseCase():
             raise MissingFieldException("Se espera una lista de seriales de hardware.")
         return self.service.add_hardware_to_loan(loan_id, serials_hardware)
 
-    def return_hardware_loan(self, loan_id, serials_to_return: list[str]) -> Loan:
+    def return_hardware_loan(self, loan_id, hardware_returns: list[dict]) -> Loan:
         loan = self.service.get(loan_id)
         if not loan:
             raise LoanNotFoundException(loan_id)
-        return self.service.return_hardware(loan, serials_to_return)
+        return self.service.return_hardware(loan, hardware_returns)
+
         
 

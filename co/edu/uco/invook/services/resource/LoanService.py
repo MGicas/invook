@@ -11,6 +11,7 @@ from ...applicationcore.domain.user.Lender import Lender
 from ...crosscutting.util.UtilPatch import UtilPatch
 from ...applicationcore.domain.inventory.Hardware import Hardware
 from ...applicationcore.domain.inventory.HardwareAvailable import HardwareAvailable
+from ...applicationcore.domain.inventory.HardwareState import HardwareState
 from ...applicationcore.domain.resource.Loan import Loan
 from ...applicationcore.domain.resource.LoanStatus import LoanStatus
 from ...crosscutting.exception.impl.BusinessException import BusinessException, LoanAlreadyClosedException, LoanNotFoundException
@@ -103,27 +104,34 @@ class LoanService:
      
     @staticmethod
     @transaction.atomic
-    def return_hardware(loan: Loan, serials_to_return: list[str]) -> Loan:
+    def return_hardware(loan: Loan, hardware_returns: list[dict]) -> Loan:
         try:
             if not LoanService.validate_loan_status(loan):
                 raise LoanAlreadyClosedException(loan.id)
-            
+
             loan_hardwares = {lh.hardware.serial: lh for lh in LoanHardware.objects.filter(loan=loan)}
 
             logger.debug(f"Loan ID: {loan.id}, Loan Hardwares: {loan_hardwares}")
 
-            invalid_serials = [serial for serial in serials_to_return if serial not in loan_hardwares]
+            invalid_serials = [hr["serial"] for hr in hardware_returns if hr["serial"] not in loan_hardwares]
             if invalid_serials:
                 raise BusinessException(f"Los siguientes seriales no pertenecen al préstamo: {', '.join(invalid_serials)}")
 
-            for serial in serials_to_return:
-                lh = loan_hardwares[serial]
+            for hr in hardware_returns:
+                serial = hr["serial"]
+                state = hr.get("state")
 
+                if not state or state not in HardwareState.__members__:
+                    raise BusinessException(f"Estado inválido para el hardware {serial}: {state}")
+
+                lh = loan_hardwares[serial]
                 lh.returned_at = timezone.localtime(timezone.now())
+                lh.return_state = state
                 lh.save()
 
                 hw = lh.hardware
                 hw.available = HardwareAvailable.DISPONIBLE.value
+                hw.state = state
                 hw.save()
 
             if LoanService.check_if_all_hardware_returned(loan):

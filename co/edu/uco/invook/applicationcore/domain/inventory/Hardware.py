@@ -12,7 +12,7 @@ class Hardware(models.Model):
     state = models.CharField(
         max_length = 20,
         choices = [(state.name, state.value) for state in HardwareState],
-        default = HardwareState.BUENO.name
+        default = HardwareState.BUENO.value
     )
     hardware_type = models.ForeignKey(HardwareType, on_delete = models.CASCADE)
     available = models.CharField(
@@ -33,4 +33,4 @@ class Hardware(models.Model):
         app_label = "invook"
         
     def __str__(self):
-        return f"Hardware {self.serial} - {self.name} - {self._state} - {self.available}"
+        return f"Hardware {self.serial} - {self.name} - {self.state} - {self.available}"
