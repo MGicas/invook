@@ -24,39 +24,19 @@ class UserFacade(ABC):
         pass
 
     #AdministrativeUser
+
     @abstractmethod
     def create_administrative_user(self, **kwargs):
         pass
 
     @abstractmethod
-    def get_administrative_user(self, username):
+    def update_profile(self, **kwargs):
         pass
 
     @abstractmethod
-    def patch_administrative_user(self, username, **kwargs):
+    def change_state(self, **kwargs):
         pass
 
     @abstractmethod
-    def delete_administrative_user(self, username):
+    def set_role(self, **kwargs):
         pass
-
-    @abstractmethod
-    def list_all_administrative_users(self):
-        pass
-
-    @abstractmethod
-    def mark_administrative_user_active(self, username):
-        pass
-
-    @abstractmethod
-    def mark_administrative_user_unactive(self, username):
-        pass
-
-    @abstractmethod
-    def update_administrative_user(self, username, **kwargs):
-        pass
-
-    @abstractmethod
-    def change_administrative_user_password(self, username, new_password):
-        pass
-    

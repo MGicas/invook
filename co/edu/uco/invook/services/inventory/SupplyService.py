@@ -94,7 +94,7 @@ class SupplyService:
         try:
             supply = SupplyService.get(code=code)
         except Supply.DoesNotExist:
-                raise ValueError(f"Storage con código '{code}' no existe")
+                raise ValueError(f"Consumible con código '{code}' no existe")
         supply.count += count
         supply.quantity += quantity
         supply.stock = supply.count * supply.quantity
