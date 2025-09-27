@@ -18,7 +18,8 @@ class LoanController(APIView):
             except LoanNotFoundException as e:
                 return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
         else:
-            all_loans = self.facade.list_all_loans()
+            status_filter = request.query_params.get("status")
+            all_loans = self.facade.list_all_loans(status_filter)
             serializer = LoanSerializer(all_loans, many=True)
             return Response(serializer.data)
 

@@ -105,3 +105,19 @@ class HardwareService:
             return list(Hardware.objects.all())
         except DatabaseError as e:
             raise DatabaseOperationException("Error al listar hardware en la base de datos") from e
+        
+    @staticmethod
+    def list_by_type(hardware_type_id: str) -> list[Hardware]:
+        try:
+            return list(Hardware.objects.filter(hardware_type_id=hardware_type_id))
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al filtrar hardware por tipo en la base de datos") from e
+    @staticmethod
+    def list_by_type(hardware_type: str) -> list[Hardware]:
+        try:
+            
+            if hardware_type.isdigit():
+                return list(Hardware.objects.filter(hardware_type_id=hardware_type))
+            return list(Hardware.objects.filter(hardware_type__name=hardware_type))
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al filtrar hardware por tipo en la base de datos") from e

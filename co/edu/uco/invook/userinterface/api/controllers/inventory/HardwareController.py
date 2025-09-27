@@ -16,8 +16,14 @@ class HardwareController(APIView):
                 hw = self.facade.get_hardware(serial)
                 serializer = HardwareSerializer(hw)
                 return Response(serializer.data)
-            else:
-                all_hw = self.facade.list_all_hardwares()
+            else:                
+                hardware_type = request.query_params.get("hardware_type", None)
+                if hardware_type:
+                    all_hw = self.facade.list_hardwares_by_type(hardware_type)
+                    
+                else:
+                    all_hw = self.facade.list_all_hardwares()
+                    
                 serializer = HardwareSerializer(all_hw, many=True)
                 return Response(serializer.data)
         except HardwareNotFoundException as e:

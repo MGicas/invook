@@ -31,6 +31,10 @@ class InventoryFacadeImpl(InventoryFacade):
 
     def list_all_hardwares(self):
         return self.hardware_service.list_all()
+    
+    def list_hardwares_by_type(self, hardware_type_id: str):
+        return self.hardware_service.list_by_type(hardware_type_id)
+
 
     def toggle_availability(self, serial: str):
         return self.hardware_service.toggle_availability(serial)
@@ -51,6 +55,10 @@ class InventoryFacadeImpl(InventoryFacade):
 
     def list_all_supplies(self):
         return self.supply_service.list_all()
+    
+    def list_supplies_by_type(self, supply_type_id: str):
+        return self.supply_service.list_by_type(supply_type_id)
+
     
     def restock_supply(self, code, count, quantity):
         return self.supply_service.restock_supply(code, count, quantity)
@@ -84,7 +92,9 @@ class InventoryFacadeImpl(InventoryFacade):
     def close_loan(self, id: str) -> Loan:
         return self.loan_service.close_loan(id)
 
-    def list_all_loans(self) -> list[Loan]:
+    def list_all_loans(self, status: Optional[str] = None) -> list[Loan]:
+        if status:
+            return self.loan_service.list_all(status)
         return self.loan_service.list_all()
 
     def add_hardware_to_loan(self, loan_id: str, serials_hardware: list[str]) -> Loan:

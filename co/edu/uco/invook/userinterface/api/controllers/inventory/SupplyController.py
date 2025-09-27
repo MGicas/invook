@@ -18,9 +18,13 @@ class SupplyController(APIView):
                 supply = self.facade.get_supply(code)
                 serializer = SupplySerializer(supply)
                 return Response(serializer.data)
-            else:
-                all_supplies = self.facade.list_all_supplies()
-                serializer = SupplySerializer(all_supplies, many=True)
+            else:                
+                supply_type = request.query_params.get("supply_type", None)
+                if supply_type:
+                    supplies = self.facade.list_supplies_by_type(supply_type)
+                else:
+                    supplies = self.facade.list_all_supplies()
+                serializer = SupplySerializer(supplies, many=True)
                 return Response(serializer.data)
         except SupplyNotFoundException as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)

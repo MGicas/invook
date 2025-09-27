@@ -90,6 +90,17 @@ class SupplyService:
             raise DatabaseOperationException("Error al listar supply en la base de datos") from e
     
     @staticmethod
+    def list_by_type(supply_type: str) -> list[Supply]:
+        try:
+
+            if supply_type.isdigit():
+                return list(Supply.objects.filter(supply_type_id=supply_type))
+
+            return list(Supply.objects.filter(supply_type__name=supply_type))
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al filtrar supply por tipo en la base de datos") from e
+    
+    @staticmethod
     def restock_supply(code: str, count: int, quantity: int) -> Supply:
         try:
             supply = SupplyService.get(code=code)

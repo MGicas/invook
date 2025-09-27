@@ -172,11 +172,10 @@ class LoanService:
                 except Hardware.DoesNotExist:
                     raise HardwareNotFoundException(f"Hardware con serial {serial} no encontrado.")
 
-                # Buscar si ya existe LoanHardware para este loan y hardware
                 loan_hardware = LoanHardware.objects.filter(loan=loan, hardware=hardware).first()
 
                 if loan_hardware:
-                    # Si ya existe y fue devuelto, lo reutilizamos
+
                     if loan_hardware.returned_at is not None:
                         loan_hardware.returned_at = None
                         loan_hardware.return_state = None
@@ -185,14 +184,13 @@ class LoanService:
                     else:
                         raise BusinessException(f"El hardware {serial} ya está actualmente en préstamo en este loan.")
                 else:
-                    # Si nunca estuvo en este loan, lo creamos
+
                     LoanHardware.objects.create(
                         loan=loan,
                         hardware=hardware,
                         loaned_at=timezone.localtime(timezone.now())
                     )
 
-                # Actualizar disponibilidad del hardware
                 hardware.available = HardwareAvailable.NO_DISPONIBLE.value
                 hardware.save()
 
@@ -213,9 +211,12 @@ class LoanService:
             raise DatabaseOperationException("Error al consultar el préstamo en la base de datos.") from e
     
     @staticmethod
-    def list_all() -> list[Loan]:
+    def list_all(status_filter: Optional[str] = None) -> list[Loan]:
         try:
-            return list(Loan.objects.all())
+            qs = Loan.objects.all()
+            if status_filter:
+                qs = qs.filter(status=status_filter)
+            return list(qs)
         except Exception as e:
             raise DatabaseOperationException("Error al listar los préstamos en la base de datos.") from e
     
