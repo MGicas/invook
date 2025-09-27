@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from ....applicationcore.domain.resource.Consum import Consum
-from .AdministrativeUserSerializer import AdministrativeUserSerializer
 from .ConsumSupplySerializer import ConsumSupplySerializer
 from .LenderSerializer import LenderSerializer
 from ....applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacadeImpl

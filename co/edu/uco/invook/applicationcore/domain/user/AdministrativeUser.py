@@ -1,52 +1,42 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from .AdministrativeUserState import AdministrativeUserState
-from .AdministrativeUserRole import AdministrativeUserRole
 from ....crosscutting.util.UtilText import UtilText
-from .User import User
 
-class AdministrativeUserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError("El usuario debe tener un nombre de usuario")
-        user = self.model(username=username, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+ADMIN_GROUP = "ADMIN"
+MONITOR_GROUP = "MONITOR"
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        return self.create_user(username, password, **extra_fields)
+class AdministrativeUser(AbstractUser):
 
-
-class AdministrativeUser(User, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)
 
     state = models.CharField(
         max_length=20,
-        choices=[(state.name, state.value) for state in AdministrativeUserState],
-        default=AdministrativeUserState.ACTIVO.name
+        choices=[(s.name, s.value) for s in AdministrativeUserState],
+        default=AdministrativeUserState.ACTIVO.name,
     )
-    role = models.CharField(
-        max_length=20,
-        choices=[(role.name, role.value) for role in AdministrativeUserRole],
-        default=AdministrativeUserRole.MONITOR.name
-    )
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS: list[str] = [] 
 
-    objects = AdministrativeUserManager()
+    @property
+    def role(self) -> str:
+        if self.groups.filter(name=ADMIN_GROUP).exists():
+            return "ADMIN"
+        if self.groups.filter(name=MONITOR_GROUP).exists():
+            return "MONITOR"
+        return "UNKNOWN"
+
+    def clean(self):
+
+        if self.username:
+            self.username = UtilText.apply_trim(self.username)
+        
+        if self.email:
+            self.email = UtilText.apply_trim(self.email)
 
     def save(self, *args, **kwargs):
-        self.username = UtilText.apply_trim(self.username)
-        self.password = UtilText.apply_trim(self.password)
+        self.clean()
         super().save(*args, **kwargs)
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-
-    def __str__(self):
-        return f"AdministrativeUser {self.username} - {self.state} - {self.role}"
+    class Meta:
+        db_table = "administrative_user"
+        verbose_name = "Administrative User"
+        verbose_name_plural = "Administrative Users"

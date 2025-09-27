@@ -2,11 +2,19 @@ from .userinterface.api.controllers.inventory.HardwareController import Hardware
 from .userinterface.api.controllers.inventory.SupplyController import SupplyController
 from .userinterface.api.controllers.resource.ConsumController import ConsumController
 from .userinterface.api.controllers.resource.LoanController import LoanController   
-from .userinterface.api.controllers.user.AdministrativeUserController import AdministrativeUserController
 from .userinterface.api.controllers.user.LenderController import LenderController
-from .userinterface.api.controllers.user.LoginController import LoginController
 from . import views
 from django.urls import path
+from .userinterface.api.controllers.user.AdministrativeUserController import (
+    AdministrativeUserListCreateAPIView,
+    AdministrativeUserDetailAPIView,
+    AdministrativeUserProfileAPIView,
+    AdministrativeUserStateAPIView,
+    AdministrativeUserRoleAPIView,
+)
+from .userinterface.api.controllers.user.LoginController import (
+    AdminTokenObtainPairController, AdminTokenRefreshView, LogoutController, WhoAmIController
+)
 
 
 urlpatterns = [
@@ -29,8 +37,14 @@ urlpatterns = [
     path('users/lenders/', LenderController.as_view(), name='create-lender'),
     path('users/lenders/<str:id>/', LenderController.as_view()),
 
-    path('users/admins/', AdministrativeUserController.as_view()),
-    path('users/admins/<str:username>/', AdministrativeUserController.as_view()),
+    path("users/admins/", AdministrativeUserListCreateAPIView.as_view(), name="adminuser-list-create"),
+    path("users/admins/<int:pk>/", AdministrativeUserDetailAPIView.as_view(), name="adminuser-detail"),
+    path("users/admins/<int:pk>/profile/", AdministrativeUserProfileAPIView.as_view(), name="adminuser-profile"),
+    path("users/admins/<int:pk>/state/", AdministrativeUserStateAPIView.as_view(), name="adminuser-state"),
+    path("users/admins/<int:pk>/role/", AdministrativeUserRoleAPIView.as_view(), name="adminuser-role"),
 
-    path('login/', LoginController.as_view(), name="login"),
+    path("auth/login/", AdminTokenObtainPairController.as_view(), name="auth-login"),
+    path("auth/refresh/", AdminTokenRefreshView.as_view(), name="auth-refresh"),
+    path("auth/logout/", LogoutController.as_view(), name="auth-logout"),
+    path("auth/whoami/", WhoAmIController.as_view(), name="auth-whoami"),
 ]

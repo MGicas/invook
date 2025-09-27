@@ -1,54 +1,39 @@
 from ..UserFacade import UserFacade
-from ...usecase.impl.AdministrativeUserUseCase import AdministrativeUserUseCase
-from ...usecase.impl.LenderUseCase import LenderUseCase
-
+from ...dto.CreateAdministrativeUserDTO import CreateAdministrativeUserDTO
+from ....services.user.AdministrativeUserService import AdministrativeUserService
+from ....services.user.LenderService import LenderService
 
 class UserFacadeImpl(UserFacade):
 
     def __init__(self):
-        self.administrative_user_uc = AdministrativeUserUseCase()
-        self.lender_uc = LenderUseCase()
+        self.administrative_service = AdministrativeUserService()
+        self.lender_service = LenderService()
 
     #AdministrativeUser
-    def create_administrative_user(self, **kwargs):
-        return self.administrative_user_uc.create(**kwargs)
-    
-    def get_administrative_user(self, username: str):
-        return self.administrative_user_uc.get(username)
-    
-    def patch_administrative_user(self, username: str, **kwargs):
-        return self.administrative_user_uc.patch(username, **kwargs)
-    
-    def delete_administrative_user(self, username: str):
-        return self.administrative_user_uc.delete(username)
-    
-    def list_all_administrative_users(self):
-        return self.administrative_user_uc.list_all()
-    
-    def mark_administrative_user_unactive(self, username: str):
-        return self.administrative_user_uc.mark_unactive(username)
-    
-    def mark_administrative_user_active(self, username: str):
-        return self.administrative_user_uc.mark_active(username)
-    
-    def update_administrative_user(self, username: str, **kwargs):    
-        return self.administrative_user_uc.update(username, **kwargs)
-    
-    def change_administrative_user_password(self, username: str, new_password: str):
-        return self.administrative_user_uc.change_password(username, new_password)
+    def create_administrative_user(self, dto: CreateAdministrativeUserDTO):
+        return self.administrative_service.create_with_profile(dto)
+
+    def update_profile(self, user_id: int, **changes):
+        return self.administrative_service.update_profile(user_id, **changes)
+
+    def change_state(self, user_id: int, new_state: str):
+        return self.administrative_service.change_state(user_id, new_state)
+
+    def set_role(self, user_id: int, role: str):
+        return self.administrative_service.set_role(user_id, role)
 
     #Lender
     def create_lender(self, **kwargs):
-        return self.lender_uc.create(**kwargs)
+        return self.lender_service.create(**kwargs)
     
     def get_lender(self, id: str):
-        return self.lender_uc.get(id)
+        return self.lender_service.get(id)
     
     def patch_lender(self, id: str, **kwargs):
-        return self.lender_uc.patch(id, **kwargs)
+        return self.lender_service.patch(id, **kwargs)
     
     def delete_lender(self, id: str):
-        return self.lender_uc.delete(id)
+        return self.lender_service.delete(id)
     
     def list_all_lenders(self):
-        return self.lender_uc.list_all()
+        return self.lender_service.list_all()
