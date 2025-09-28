@@ -54,10 +54,17 @@ class LoanService:
             lender = Lender.objects.get(id=id_lender)
             monitor = AdministrativeUser.objects.get(id=id_monitor)
             
+            loan_status = status or LoanStatus.ABIERTO.value
+            
+            if Loan.objects.filter(id_lender=lender).exclude(status=LoanStatus.CERRADO.value).exists():
+                raise BusinessException(
+                    f"El lender con id {id_lender} ya tiene un préstamo activo (estado distinto de CERRADO)."
+                )
+            
             loan = Loan.objects.create(
                 id_lender = lender,
                 id_monitor = monitor,
-                status = status or LoanStatus.ABIERTO.value
+                status = loan_status
             )
 
             for serial in serials_hardware:
@@ -69,6 +76,8 @@ class LoanService:
             raise LenderNotFoundException(f"Lender con id {id_lender} no encontrado.")
         except AdministrativeUser.DoesNotExist:
             raise AdministrativeUserNotFoundException(f"Monitor con id {id_monitor} no encontrado.")
+        except BusinessException:
+            raise
         except Exception as e:
             raise DatabaseOperationException("Error al crear el préstamo en la base de datos.") from e
         

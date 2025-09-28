@@ -63,7 +63,15 @@ class LenderController(APIView):
 
     def delete(self, request, id):
         try:
+            lender = self.facade.get_lender(id)
+            if not lender:
+                return Response({"detail": f"Lender con id '{id}' no existe."}, status=status.HTTP_404_NOT_FOUND)
+
             self.facade.delete_lender(id)
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except BusinessException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except LenderNotFoundException as e:
             return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
+

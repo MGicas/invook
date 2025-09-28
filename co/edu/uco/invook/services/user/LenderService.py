@@ -4,6 +4,7 @@ from django.db import DatabaseError
 from ...crosscutting.util.UtilPatch import UtilPatch
 from ...crosscutting.util.UtilText import UtilText
 from ...crosscutting.exception.impl.BusinessException import BusinessException
+from ...applicationcore.domain.resource.Loan import Loan
 from django.db import IntegrityError
 from ...crosscutting.exception.impl.BusinessException import LenderNotFoundException
 from ...applicationcore.domain.user.Lender import Lender
@@ -58,14 +59,22 @@ class LenderService:
 
     
     @staticmethod
-    def delete_lender(lender: Lender) -> None:
+    def delete_lender(id: str) -> None:
         try:
-            LenderService.get(lender.id)
-            lender.delete()
+            lender = Lender.objects.get(id=id)
         except Lender.DoesNotExist:
-            raise LenderNotFoundException(f"Lender con id '{id}' no existe.")        
+            raise LenderNotFoundException(f"Lender con id '{id}' no existe.")
+
+        if Loan.objects.filter(id_lender=lender).exists():
+            raise BusinessException(
+                f"No se puede eliminar el Lender '{id}' porque tiene préstamos asociados."
+            )
+
+        try:
+            lender.delete()
         except DatabaseError as e:
-            raise DatabaseOperationException("Error al eliminar hardware en la base de datos") from e
+            raise DatabaseOperationException("Error al eliminar lender en la base de datos") from e
+
 
     @staticmethod
     def list_all() -> list[Lender]:
