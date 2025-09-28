@@ -96,6 +96,10 @@ class InventoryFacadeImpl(InventoryFacade):
         if status:
             return self.loan_service.list_all(status)
         return self.loan_service.list_all()
+    
+    def list_loans_by_lender(self, lender_id: str, status: Optional[str] = None) -> list[Loan]:
+        return self.loan_service.list_by_lender(lender_id, status)
+
 
     def add_hardware_to_loan(self, loan_id: str, serials_hardware: list[str]) -> Loan:
         return self.loan_service.add_hardware_to_loan(loan_id, serials_hardware)

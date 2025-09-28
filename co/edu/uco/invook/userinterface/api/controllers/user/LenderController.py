@@ -3,6 +3,8 @@ from ...serializers.LenderSerializer import LenderSerializer
 from .....crosscutting.exception.impl.BusinessException import LenderNotFoundException
 from .....crosscutting.util.UtilText import UtilText
 from .....crosscutting.exception.impl.BusinessException import BusinessException
+from .....crosscutting.exception.impl.BusinessException import InvalidEmailException
+from .....crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -58,8 +60,47 @@ class LenderController(APIView):
             return Response(serializer.data)
         except LenderNotFoundException as e:
             return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except InvalidEmailException as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except BusinessException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except DatabaseOperationException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"detail": "Error inesperado: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request, id):
+        if not id:
+            return Response(
+                {"detail": "Se requiere un id para actualizar el recurso."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            required_fields = ["name", "email", "phone"]
+            for field in required_fields:
+                if field not in request.data:
+                    return Response(
+                        {"detail": f"El campo '{field}' es obligatorio en una actualización completa."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            lender = self.facade.update_lender(id, **request.data)
+            serializer = LenderSerializer(lender)
+            return Response(serializer.data)
+
+        except LenderNotFoundException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except InvalidEmailException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except BusinessException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except DatabaseOperationException as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"detail": "Error inesperado: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
     def delete(self, request, id):
         try:

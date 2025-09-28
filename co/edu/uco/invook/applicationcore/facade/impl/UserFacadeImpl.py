@@ -32,6 +32,9 @@ class UserFacadeImpl(UserFacade):
     def patch_lender(self, id: str, **kwargs):
         return self.lender_service.patch_lender(id, **kwargs)
     
+    def update_lender(self, id: str, **kwargs):
+        return self.lender_service.update_lender(id, **kwargs)
+    
     def delete_lender(self, id: str):
         return self.lender_service.delete_lender(id)
     

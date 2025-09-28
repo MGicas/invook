@@ -43,19 +43,31 @@ class LenderService:
             return None
         
     @staticmethod
-    def update_lender(lender: Lender, **kwargs) -> Lender:
-        if 'id' in kwargs:
-            raise ValueError("No se puede cambiar el ID de un Lender.")
-        if 'rfid' in kwargs:
-            raise ValueError("No se puede cambiar el RFID de un Lender.")
+    def update_lender(id: str, **kwargs) -> Lender:
+        try:
+            lender = Lender.objects.get(id=id)
+        except Lender.DoesNotExist:
+            raise LenderNotFoundException(f"Lender con id '{id}' no existe.")
 
-        for key, value in kwargs.items():
-            if hasattr(lender, key):
-                if isinstance(value, str):
-                    value = UtilText.apply_trim(value)
-                setattr(lender, key, value)
-        lender.save()
-        return lender
+        if 'id' in kwargs:
+            raise BusinessException("No se puede cambiar el ID de un Lender.")
+        if 'rfid' in kwargs:
+            raise BusinessException("No se puede cambiar el RFID de un Lender.")
+        if 'email' in kwargs and not UtilText.email_string_is_valid(kwargs['email']):
+            raise InvalidEmailException("El correo electrónico proporcionado no tiene un formato válido.")
+
+        try:
+            for key, value in kwargs.items():
+                if hasattr(lender, key):
+                    if isinstance(value, str):
+                        value = UtilText.apply_trim(value)
+                    setattr(lender, key, value)
+            lender.save()
+            return lender
+        except IntegrityError as e:
+            raise BusinessException("Violación de restricción de integridad al actualizar el Lender.") from e
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error en la base de datos al actualizar el Lender.") from e
 
     
     @staticmethod
@@ -95,6 +107,5 @@ class LenderService:
             raise ValueError("No se puede cambiar el RFID de un Lender.")
         if 'email' in kwargs and not UtilText.email_string_is_valid(kwargs['email']):
             raise InvalidEmailException("El correo electrónico proporcionado no tiene un formato válido.")
- 
         
         return UtilPatch.patch_model(lender, kwargs)
