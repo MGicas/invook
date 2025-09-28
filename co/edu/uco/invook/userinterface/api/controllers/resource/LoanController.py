@@ -10,6 +10,9 @@ class LoanController(APIView):
     facade = InventoryFacadeImpl()
 
     def get(self, request, id=None):
+        lender_id = request.query_params.get("lender")
+        status_filter = request.query_params.get("status")
+        
         if id:
             try:
                 loan = self.facade.get_loan(id)
@@ -17,8 +20,13 @@ class LoanController(APIView):
                 return Response(serializer.data)
             except LoanNotFoundException as e:
                 return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+        
+        elif lender_id:
+            loans = self.facade.list_loans_by_lender(lender_id, status_filter)
+            serializer = LoanSerializer(loans, many=True)
+            return Response(serializer.data)
+        
         else:
-            status_filter = request.query_params.get("status")
             all_loans = self.facade.list_all_loans(status_filter)
             serializer = LoanSerializer(all_loans, many=True)
             return Response(serializer.data)

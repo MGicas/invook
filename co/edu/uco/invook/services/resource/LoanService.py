@@ -228,6 +228,17 @@ class LoanService:
             return list(qs)
         except Exception as e:
             raise DatabaseOperationException("Error al listar los préstamos en la base de datos.") from e
+
+    @staticmethod
+    def list_by_lender(lender_id: str, status_filter: Optional[str] = None) -> list[Loan]:
+        try:
+            qs = Loan.objects.filter(id_lender=lender_id)
+            if status_filter:
+                qs = qs.filter(status=status_filter)
+            return list(qs)
+        except Exception as e:
+            raise DatabaseOperationException("Error al listar los préstamos del lender en la base de datos.") from e
+
     
     @staticmethod
     def patch_loan(id: str, **kwargs) -> Loan:
