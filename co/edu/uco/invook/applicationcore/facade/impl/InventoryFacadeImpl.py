@@ -104,7 +104,5 @@ class InventoryFacadeImpl(InventoryFacade):
     def add_hardware_to_loan(self, loan_id: str, serials_hardware: list[str]) -> Loan:
         return self.loan_service.add_hardware_to_loan(loan_id, serials_hardware)
 
-    def return_hardware_from_loan(self, loan_id: str, hardware_returns: list[dict]) -> Loan:
-        return self.loan_service.return_hardware(loan_id, hardware_returns)
-
-    
+    def return_hardware_from_loan(self, loan_id: str, hardware_returns: list[dict], id_monitor: str) -> Loan:
+        return self.loan_service.return_hardware(loan_id, hardware_returns, id_monitor)

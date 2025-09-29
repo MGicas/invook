@@ -113,11 +113,17 @@ class LoanService:
      
     @staticmethod
     @transaction.atomic
-    def return_hardware(id: str, hardware_returns: list[dict]) -> Loan:
+    def return_hardware(id: str, hardware_returns: list[dict], id_monitor: str) -> Loan:
         try:
             loan = Loan.objects.get(id=id)
             if not LoanService.validate_loan_status(loan):
                 raise LoanAlreadyClosedException(loan.id)
+            
+            try:
+                monitor = AdministrativeUser.objects.get(id=id_monitor)
+            except AdministrativeUser.DoesNotExist:
+                raise AdministrativeUserNotFoundException(f"Monitor con id {id_monitor} no encontrado.")
+
 
             loan_hardwares = {lh.hardware.serial: lh for lh in LoanHardware.objects.filter(loan=loan)}
 
@@ -144,6 +150,7 @@ class LoanService:
 
                 lh.returned_at = timezone.localtime(timezone.now())
                 lh.return_state = state
+                lh.returned_by = monitor
                 lh.save()
 
                 hw = lh.hardware

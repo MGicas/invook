@@ -53,12 +53,17 @@ class LoanController(APIView):
             elif action == "return_hardware":
                 if not id:
                     return Response({"error": "Se requiere el parámetro 'id' en la URL para devolver hardware"}, status=status.HTTP_400_BAD_REQUEST)
-                
+                            
                 hardware_returns = request.data.get("serials_hardware", [])
+                id_monitor = request.data.get("id_monitor")
+                            
+                if not id_monitor:
+                    return Response({"error": "Debe enviar 'id_monitor' en el body."}, status=status.HTTP_400_BAD_REQUEST)
+
                 if not isinstance(hardware_returns, list) or not all("serial" in hr and "state" in hr for hr in hardware_returns):
                     return Response({"error": "Debe enviar una lista de objetos con 'serial' y 'state'."}, status=status.HTTP_400_BAD_REQUEST)
 
-                loan = self.facade.return_hardware_from_loan(id, hardware_returns)
+                loan = self.facade.return_hardware_from_loan(id, hardware_returns, id_monitor)
                 return Response({"message": f"Hardware devuelto en préstamo {id}."}, status=status.HTTP_200_OK)
 
             elif action == "close_loan":
