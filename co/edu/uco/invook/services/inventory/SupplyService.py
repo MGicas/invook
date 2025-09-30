@@ -113,8 +113,8 @@ class SupplyService:
         return supply
         
     @staticmethod
-    def list_low_stock(threshold: int) -> list[Supply]:
+    def list_low_stock(threshold: int):
         try:
-            return list(Supply.objects.filter(stock__lt=threshold))
+            return Supply.objects.filter(stock__lt=threshold)
         except DatabaseError as e:
             raise DatabaseOperationException("Error al listar supply con bajo stock en la base de datos") from e

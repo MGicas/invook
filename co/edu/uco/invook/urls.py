@@ -27,7 +27,7 @@ urlpatterns = [
     # Supply
     path('inventory/supply/', SupplyController.as_view()),
     path('inventory/supply/<str:code>/', SupplyController.as_view()),
-    path("inventory/supply/low-stock/", LowStockSupplyController.as_view(), name="supplies-low-stock"),
+    path("inventory/supply/low-stock", LowStockSupplyController.as_view(), name="supplies-low-stock"),
     path("inventory/supply/<str:code>/restock/", RestockSupplyController.as_view(), name="supply-restock"), 
 
     # Consum
