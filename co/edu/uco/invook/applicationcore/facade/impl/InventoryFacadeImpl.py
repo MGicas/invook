@@ -59,7 +59,9 @@ class InventoryFacadeImpl(InventoryFacade):
     def list_supplies_by_type(self, supply_type_id: str):
         return self.supply_service.list_by_type(supply_type_id)
 
-    
+    def list_low_stock_supplies(self, threshold: int):
+        return self.supply_service.list_low_stock(threshold)
+
     def restock_supply(self, code, count, quantity):
         return self.supply_service.restock_supply(code, count, quantity)
 

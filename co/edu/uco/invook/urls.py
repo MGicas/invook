@@ -15,7 +15,9 @@ from .userinterface.api.controllers.user.AdministrativeUserController import (
 from .userinterface.api.controllers.user.LoginController import (
     AdminTokenObtainPairController, AdminTokenRefreshView, LogoutController, WhoAmIController
 )
-
+from .userinterface.api.controllers.resource.DailyStatisticsController import DailyStatisticsController
+from .userinterface.api.controllers.inventory.RestockSupplyController import RestockSupplyController
+from .userinterface.api.controllers.inventory.LowStockSupplyController import LowStockSupplyController
 
 urlpatterns = [
     path('', views.home, name='home'), 
@@ -25,6 +27,8 @@ urlpatterns = [
     # Supply
     path('inventory/supply/', SupplyController.as_view()),
     path('inventory/supply/<str:code>/', SupplyController.as_view()),
+    path("inventory/supply/low-stock/", LowStockSupplyController.as_view(), name="supplies-low-stock"),
+    path("inventory/supply/<str:code>/restock/", RestockSupplyController.as_view(), name="supply-restock"), 
 
     # Consum
     path('consum/', ConsumController.as_view()),
@@ -33,6 +37,7 @@ urlpatterns = [
     # Loan
     path('loan/', LoanController.as_view()),
     path('loan/<str:id>/', LoanController.as_view()),
+    path('statistics/', DailyStatisticsController.as_view(), name='daily-statistics'),
     
     path('users/lenders/', LenderController.as_view(), name='create-lender'),
     path('users/lenders/<str:id>/', LenderController.as_view()),
