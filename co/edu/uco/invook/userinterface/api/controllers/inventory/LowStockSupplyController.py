@@ -9,9 +9,6 @@ class LowStockSupplyController(APIView):
     facade = InventoryFacadeImpl()
 
     def get(self, request):
-        """
-        GET /api/v1/inventory/supplies/low-stock?threshold=int
-        """
         threshold = request.query_params.get("threshold", 10)
         try:
             threshold = int(threshold)
