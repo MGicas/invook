@@ -108,7 +108,13 @@ class SupplyService:
                 raise ValueError(f"Consumible con código '{code}' no existe")
         supply.count += count
         supply.quantity += quantity
-        supply.stock = supply.count * supply.quantity
+        supply.stock += count * quantity
         supply.save()
         return supply
         
+    @staticmethod
+    def list_low_stock(threshold: int) -> list[Supply]:
+        try:
+            return list(Supply.objects.filter(stock__lt=threshold))
+        except DatabaseError as e:
+            raise DatabaseOperationException("Error al listar supply con bajo stock en la base de datos") from e

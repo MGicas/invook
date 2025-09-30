@@ -6,7 +6,7 @@ from .....applicationcore.facade.impl.InventoryFacadeImpl import InventoryFacade
 from ...serializers.RestockSupplySerializer import RestockSupplyInSerializer
 from ...serializers.SupplySerializer import SupplySerializer
 
-class SupplyRestockController(APIView):
+class RestockSupplyController(APIView):
     facade = InventoryFacadeImpl()
 
     def post(self, request, code: str):
