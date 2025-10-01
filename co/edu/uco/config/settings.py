@@ -175,7 +175,6 @@ CORS_ALLOW_METHODS = [
     "OPTIONS"
 ]
 
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"   # para collectstatic
 MEDIA_URL = "/media/"
