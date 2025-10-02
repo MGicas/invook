@@ -19,6 +19,7 @@ from .userinterface.api.controllers.resource.DailyStatisticsController import Da
 from .userinterface.api.controllers.inventory.RestockSupplyController import RestockSupplyController
 from .userinterface.api.controllers.inventory.LowStockSupplyController import LowStockSupplyController
 from .userinterface.api.controllers.notification.SendEmailController import SendEmailController
+from .userinterface.api.controllers.resource.SendMessagesToLendersController import SendMessagesToLendersController
 
 urlpatterns = [
     path('', views.home, name='home'), 
@@ -42,6 +43,7 @@ urlpatterns = [
     
     path('users/lenders/', LenderController.as_view(), name='create-lender'),
     path('users/lenders/<str:id>/', LenderController.as_view()),
+    path('users/overdue/send-messages/', SendMessagesToLendersController.as_view(), name='send-messages-to-lenders'),
 
     path("users/admins/", AdministrativeUserListCreateAPIView.as_view(), name="adminuser-list-create"),
     path("users/admins/<int:pk>/", AdministrativeUserDetailAPIView.as_view(), name="adminuser-detail"),
