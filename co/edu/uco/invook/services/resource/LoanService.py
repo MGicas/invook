@@ -17,6 +17,8 @@ from ...applicationcore.domain.resource.LoanStatus import LoanStatus
 from ...crosscutting.exception.impl.BusinessException import BusinessException, LoanAlreadyClosedException, LoanNotFoundException
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
 from ...crosscutting.exception.impl.BusinessException import HardwareNotFoundException, LenderNotFoundException, AdministrativeUserNotFoundException
+from datetime import datetime
+from ..notification.SendGridService import SendGridService
 
 class LoanService:
 
@@ -256,3 +258,51 @@ class LoanService:
             raise LoanNotFoundException(f"Préstamo con id {id} no encontrado.")
         except Exception as e:
             raise DatabaseOperationException("Error al realizar la actualización en el préstamo en la base de datos.") from e
+
+
+    @staticmethod
+    def send_message_to_lenders():
+        today = datetime.now().date()
+
+        loans = Loan.objects.filter(status="ABIERTO", loan_date__lt=today)
+        logger.debug(f"Préstamos abiertos con hardware no disponible: {loans}")
+
+        if not loans.exists():
+            return "No hay préstamos abiertos con hardware no disponible."
+
+        for loan in loans:
+            lender_email = loan.id_lender.email
+            logger.debug(f"Enviando correo a {lender_email}")
+
+            hardware_no_disponible = LoanHardware.objects.filter(
+                loan=loan,
+                hardware__available=HardwareAvailable.NO_DISPONIBLE.name
+            ).select_related('hardware')
+
+            hardware_info = ""
+            for item in hardware_no_disponible:
+                hardware_info += f"- {item.hardware.name} (Serial: {item.hardware.serial})\n"
+
+            if not hardware_info:
+                hardware_info = "No hay hardware no disponible para este préstamo."
+
+            subject = "Recordatorio: Tienes un préstamo abierto con hardware no disponible"
+            body = f"""
+            Hola {loan.id_lender.names} {loan.id_lender.surnames},
+
+            Tu préstamo con ID {loan.id} está en estado abierto desde {loan.loan_date.strftime('%Y-%m-%d')}.
+            A continuación, te informamos sobre los hardware asociados a tu préstamo que están actualmente PRESTADOS:
+
+            {hardware_info}
+
+            Por favor, verifica los detalles de tu préstamo y la disponibilidad de los hardware.
+            """
+            logger.debug(f"Enviando correo a {lender_email}")
+            try:
+                logger.debug(f"Enviando correo a {lender_email}")   
+                response, email_log = SendGridService().send_email(subject, lender_email, body)
+                logger.debug(f"Correo enviado a {lender_email}. Estado: {response.status_code}")
+            except Exception as e:
+                logger.error(f"Error al enviar correo a {lender_email}: {e}")
+        
+        return f"Messages sent to {len(loans)} lenders."

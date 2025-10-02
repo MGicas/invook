@@ -16,6 +16,10 @@ class SendGridService:
         try:
            response = self.sg.send(mail)
 
+           if response.status_code != 202:
+                raise Exception(f"Error al enviar el correo: {response.status_code}, {response.body}")
+            
+            
            email_log = EmailLog.objects.create(
                 to_email=to_email.email,
                 subject=subject,

@@ -108,3 +108,7 @@ class InventoryFacadeImpl(InventoryFacade):
 
     def return_hardware_from_loan(self, loan_id: str, hardware_returns: list[dict], id_monitor: str) -> Loan:
         return self.loan_service.return_hardware(loan_id, hardware_returns, id_monitor)
+
+    @staticmethod
+    def send_message_to_lenders():
+        return LoanService.send_message_to_lenders()

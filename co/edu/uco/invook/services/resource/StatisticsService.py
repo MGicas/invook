@@ -35,7 +35,7 @@ class StatisticsService:
 
         overdue_open_qs = Loan.objects.filter(
             loan_date__lt=start
-        ).filter(Q(return_date__isnull=True) | Q(status=OPEN))
+        ).filter(Q(return_date__isnull=True) | Q(status=OPEN)) 
 
         open_count = open_started_today_qs.count()
         closed_count = closed_opened_today_qs.count()
