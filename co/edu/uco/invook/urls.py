@@ -18,6 +18,7 @@ from .userinterface.api.controllers.user.LoginController import (
 from .userinterface.api.controllers.resource.DailyStatisticsController import DailyStatisticsController
 from .userinterface.api.controllers.inventory.RestockSupplyController import RestockSupplyController
 from .userinterface.api.controllers.inventory.LowStockSupplyController import LowStockSupplyController
+from .userinterface.api.controllers.notification.SendEmailController import SendEmailController
 
 urlpatterns = [
     path('', views.home, name='home'), 
@@ -52,4 +53,6 @@ urlpatterns = [
     path("auth/refresh/", AdminTokenRefreshView.as_view(), name="auth-refresh"),
     path("auth/logout/", LogoutController.as_view(), name="auth-logout"),
     path("auth/whoami/", WhoAmIController.as_view(), name="auth-whoami"),
+
+    path('notification/send-email/', SendEmailController.as_view(), name='send-email'),
 ]
