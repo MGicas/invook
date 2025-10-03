@@ -118,6 +118,6 @@ class HardwareService:
             
             if hardware_type.isdigit():
                 return list(Hardware.objects.filter(hardware_type_id=hardware_type))
-            return list(Hardware.objects.filter(hardware_type__name=hardware_type))
+            return list(Hardware.objects.filter(hardware_type__name__icontains=hardware_type))
         except DatabaseError as e:
             raise DatabaseOperationException("Error al filtrar hardware por tipo en la base de datos") from e

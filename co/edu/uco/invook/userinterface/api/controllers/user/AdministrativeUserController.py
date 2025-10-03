@@ -24,15 +24,21 @@ class AdministrativeUserListCreateAPIView(APIView):
 
     def get(self, request):
         qs = AdministrativeUser.objects.select_related("profile").all().order_by("id")
+
+        name = request.query_params.get("name")
+        if name:
+            qs = qs.filter(profile__names__icontains=name)
+
         paginator = PageNumberPagination()
-        paginator.page_size = 10 
+        paginator.page_size = 10
         page = paginator.paginate_queryset(qs, request)
-        if page is None:
+        if page is not None:
             ser = AdministrativeUserDetailSerializer(page, many=True)
             return paginator.get_paginated_response(ser.data)
-        
+
         ser = AdministrativeUserDetailSerializer(qs, many=True)
         return Response(ser.data)
+
 
     def post(self, request):
         ser = AdministrativeUserCreateSerializer(data=request.data)

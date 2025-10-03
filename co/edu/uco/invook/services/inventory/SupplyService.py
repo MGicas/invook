@@ -96,7 +96,7 @@ class SupplyService:
             if supply_type.isdigit():
                 return list(Supply.objects.filter(supply_type_id=supply_type))
 
-            return list(Supply.objects.filter(supply_type__name=supply_type))
+            return list(Supply.objects.filter(supply_type__name__icontains=supply_type))
         except DatabaseError as e:
             raise DatabaseOperationException("Error al filtrar supply por tipo en la base de datos") from e
     

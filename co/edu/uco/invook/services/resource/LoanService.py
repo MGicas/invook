@@ -126,7 +126,6 @@ class LoanService:
             except AdministrativeUser.DoesNotExist:
                 raise AdministrativeUserNotFoundException(f"Monitor con id {id_monitor} no encontrado.")
 
-
             loan_hardwares = {lh.hardware.serial: lh for lh in LoanHardware.objects.filter(loan=loan)}
 
             logger.debug(f"Loan ID: {loan.id}, Loan Hardwares: {loan_hardwares}")
