@@ -70,9 +70,6 @@ class SupplyTypeController(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request, id):
-        """
-        PUT usado para desactivar un SupplyType (cambiar active = False)
-        """
         try:
             supply_type = self.facade.deactivate_supply_type(id)
             serializer = SupplyTypeSerializer(supply_type)

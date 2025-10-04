@@ -1,11 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 from ...applicationcore.domain.inventory.SupplyType import SupplyType
-from ....crosscutting.exception.impl.BusinessException import (
-    BusinessException,
-    DuplicateSerialException,
-    HardwareNotFoundException
-)
-from ....crosscutting.util.UtilText import UtilText
+from ...crosscutting.exception.impl.BusinessException import BusinessException
+from ...crosscutting.exception.impl.BusinessException import DuplicateSerialException
+from ...crosscutting.exception.impl.BusinessException import HardwareNotFoundException
+from ...crosscutting.util.UtilText import UtilText
 
 class SupplyTypeService:
 

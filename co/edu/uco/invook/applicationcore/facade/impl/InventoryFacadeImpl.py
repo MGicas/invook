@@ -7,6 +7,8 @@ from ....services.inventory.HardwareService import HardwareService
 from ....services.inventory.SupplyService import SupplyService
 from ....services.resource.ConsumService import ConsumService
 from ....services.resource.LoanService import LoanService
+from ....services.inventory.HardwareTypeService import HardwareTypeService
+from ....services.inventory.SupplyTypeService import SupplyTypeService
 
 class InventoryFacadeImpl(InventoryFacade): 
 
@@ -15,6 +17,9 @@ class InventoryFacadeImpl(InventoryFacade):
         self.supply_service = SupplyService()
         self.consum_service = ConsumService()    
         self.loan_service = LoanService()
+        self.hardware_type_service = HardwareTypeService()
+        self.supply_type_service = SupplyTypeService()
+        
 
     #Hardware
     def create_hardware(self, **kwargs):

@@ -20,17 +20,25 @@ from .userinterface.api.controllers.inventory.RestockSupplyController import Res
 from .userinterface.api.controllers.inventory.LowStockSupplyController import LowStockSupplyController
 from .userinterface.api.controllers.notification.SendEmailController import SendEmailController
 from .userinterface.api.controllers.resource.SendMessagesToLendersController import SendMessagesToLendersController
+from .userinterface.api.controllers.inventory.SupplyTypeController import SupplyTypeController
+from .userinterface.api.controllers.inventory.HardwareTypeController import HardwareTypeController
 
 urlpatterns = [
     path('', views.home, name='home'), 
     path('inventory/hardware/', HardwareController.as_view()),  
     path('inventory/hardware/<str:serial>/', HardwareController.as_view()),
 
+    path("inventory/hardware-types/", HardwareTypeController.as_view()),         
+    path("inventory/hardware-types/<str:id>/", HardwareTypeController.as_view()),
+
     # Supply
     path('inventory/supply/', SupplyController.as_view()),
     path('inventory/supply/<str:code>/', SupplyController.as_view()),
     path("inventory/supply/low-stock", LowStockSupplyController.as_view(), name="supplies-low-stock"),
     path("inventory/supply/<str:code>/restock/", RestockSupplyController.as_view(), name="supply-restock"), 
+
+    path("inventory/supply-types/", SupplyTypeController.as_view()),                
+    path("inventory/supply-types/<str:id>/", SupplyTypeController.as_view()),
 
     # Consum
     path('consum/', ConsumController.as_view()),
