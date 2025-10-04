@@ -12,7 +12,8 @@ class User(models.Model):
     phone = models.CharField(
         max_length = 20,
         validators = [RegexValidator(r'^\+?1?\d{9,15}$')])
-
+    active = models.BooleanField(default=True)
+    
     def save(self, *args, **kwargs):
         self.id = UtilText.apply_trim(self.id)
         self.rfid = UtilText.apply_trim(self.rfid)

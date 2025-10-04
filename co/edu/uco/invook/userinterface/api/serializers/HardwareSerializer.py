@@ -10,4 +10,9 @@ class HardwareSerializer(serializers.Serializer):
     hardware_type = serializers.CharField(max_length=100)
     state = serializers.CharField()
     available = serializers.CharField()
+    hardware_type_name = serializers.CharField(source="hardware_type.name", read_only=True)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["hardware_type"] = instance.hardware_type.name  # muestra el nombre, no el id
+        return rep

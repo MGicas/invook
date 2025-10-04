@@ -82,9 +82,15 @@ class HardwareController(APIView):
         except DatabaseOperationException as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
-    def delete(self, request, serial):
+    def put(self, request, serial):
         try:
-            self.facade.delete_hardware(serial)
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            hw = self.facade.deactivate_hardware(serial)
+            serializer = HardwareSerializer(hw)
+            return Response(
+                {"message": f"Hardware '{serial}' inactivo.", "hardware": serializer.data},
+                status=status.HTTP_200_OK
+            )
         except HardwareNotFoundException as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except DatabaseOperationException as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

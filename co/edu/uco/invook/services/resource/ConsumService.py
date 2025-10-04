@@ -42,20 +42,17 @@ class ConsumService:
                 )
 
                 for item in supplies_data:
-                    supply_code= item['supply_code']
+                    supply_name = item['supply_name']
 
-                    if isinstance(supply_code, dict):
-                        supply_code = supply_code.get("code")
+                    try:
+                        supply = Supply.objects.get(name__iexact=supply_name)
+                    except Supply.DoesNotExist:
+                        raise SupplyNotFoundException(f"Supply con nombre '{supply_name}' no existe")
 
                     quantity = item['quantity']
 
-                    try:
-                        supply = Supply.objects.get(code=supply_code)
-                    except Supply.DoesNotExist:
-                        raise SupplyNotFoundException(f"Producto con ID {supply_code} no existe")
-
                     if supply.stock < quantity:
-                        raise ValidationError(f"No hay suficiente stock para Supply con {supply_code}")
+                        raise ValidationError(f"No hay suficiente stock para Supply con {supply_name}")
                     
                     supply.stock -= quantity
                     supply.save()

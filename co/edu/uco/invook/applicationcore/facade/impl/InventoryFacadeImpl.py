@@ -31,8 +31,8 @@ class InventoryFacadeImpl(InventoryFacade):
     def patch_hardware(self, serial: str, **kwargs):
         return self.hardware_service.patch_hardware(serial, **kwargs)
 
-    def delete_hardware(self, serial: str):
-        return self.hardware_service.delete_hardware(serial)
+    def deactivate_hardware(self, serial: str):
+        return self.hardware_service.deactivate_hardware(serial)
 
     def list_all_hardwares(self):
         return self.hardware_service.list_all()
@@ -55,8 +55,8 @@ class InventoryFacadeImpl(InventoryFacade):
     def patch_supply(self, code: str, **kwargs):
         return self.supply_service.patch_supply(code, **kwargs)
 
-    def delete_supply(self, code: str):
-        return self.supply_service.delete_supply(code)
+    def deactivate_supply(self, code: str):
+        return self.supply_service.deactivate_supply(code)
 
     def list_all_supplies(self):
         return self.supply_service.list_all()

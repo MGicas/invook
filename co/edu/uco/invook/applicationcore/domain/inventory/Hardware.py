@@ -20,6 +20,7 @@ class Hardware(models.Model):
         choices = [(available.name, available.value) for available in HardwareAvailable],
         default = HardwareAvailable.DISPONIBLE.name
     )
+    active = models.BooleanField(default=True)
     
     def save(self, *args, **kwargs):
         self.serial = UtilText.apply_trim(self.serial)

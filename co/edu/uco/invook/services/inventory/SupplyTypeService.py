@@ -35,6 +35,10 @@ class SupplyTypeService:
     def patch_supply_type(self, identifier: str, **kwargs) -> SupplyType:
         try:
             supply_type = SupplyType.objects.get(pk=identifier)
+
+            if "id" in kwargs:
+                raise BusinessException("No se permite cambiar el ID de un SupplyType")
+        
             for field, value in kwargs.items():
                 if hasattr(supply_type, field):
                     setattr(supply_type, field, UtilText.apply_trim(value))

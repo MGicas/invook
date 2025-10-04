@@ -23,6 +23,10 @@ class UserFacade(ABC):
     def list_all_lenders(self):
         pass
 
+    @abstractmethod
+    def change_lender_state(self, id):
+        pass
+    
     #AdministrativeUser
 
     @abstractmethod

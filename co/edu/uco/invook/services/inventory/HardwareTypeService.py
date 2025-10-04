@@ -17,6 +17,10 @@ class HardwareTypeService:
 
     def patch_hardware_type(self, id: str, **kwargs) -> HardwareType:
         hardware_type = self.get(id)
+        
+        if "id" in kwargs:
+            raise BusinessException("No se permite cambiar el ID de un HardwareType")
+        
         for field, value in kwargs.items():
             setattr(hardware_type, field, value)
         hardware_type.save()

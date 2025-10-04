@@ -74,14 +74,17 @@ class SupplyService:
 
     
     @staticmethod
-    def delete_supply(supply: Supply) -> None:
+    def deactivate_supply(code: str) -> Supply:
         try:
-            supply.delete()
-        except Supply.DoesNotExist as e:
-            raise SupplyNotFoundException(supply)
+            supply = Supply.objects.get(code=code)
+            supply.active = False
+            supply.save()
+            return supply
+        except Supply.DoesNotExist:
+            raise SupplyNotFoundException(code)
         except DatabaseError as e:
-            raise DatabaseOperationException("Error al eliminar supply en la base de datos") from e
-        
+            raise DatabaseOperationException("Error al desactivar supply en la base de datos") from e
+       
     @staticmethod
     def list_all() -> list[Supply]:
         try:

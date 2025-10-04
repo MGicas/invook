@@ -13,8 +13,8 @@ class HardwareService:
     @staticmethod
     def create_hardware(serial, name, description, comment, hardware_type, state=None, available=None) -> Hardware:
         try:
-            hw_type_instance = HardwareType.objects.get(id=hardware_type)
-
+            hw_type_instance = HardwareType.objects.get(name__iexact=hardware_type)
+                        
             hw, created = Hardware.objects.get_or_create(
                 serial=serial,
                 defaults={
@@ -77,14 +77,17 @@ class HardwareService:
             raise DatabaseOperationException("Error al actualizar hardware en la base de datos") from e
 
     @staticmethod
-    def delete_hardware(hw: Hardware) -> None:
+    def deactivate_hardware(serial: str) -> Hardware:
         try:
-            HardwareService.get(hw.serial)
-            hw.delete()
-        except Hardware.DoesNotExist as e:
-            raise HardwareNotFoundException(hw)
+            hw = Hardware.objects.get(serial=serial)
+            hw.active = False
+            hw.available = HardwareAvailable.NO_DISPONIBLE.name  # también lo marcamos como no disponible
+            hw.save()
+            return hw
+        except Hardware.DoesNotExist:
+            raise HardwareNotFoundException(serial)
         except DatabaseError as e:
-            raise DatabaseOperationException("Error al eliminar hardware en la base de datos") from e
+            raise DatabaseOperationException("Error al desactivar hardware en la base de datos") from e
 
     @staticmethod
     def toggle_availability(hw: Hardware) -> Hardware:

@@ -11,6 +11,7 @@ class Supply(models.Model):
     count = models.IntegerField()
     quantity = models.IntegerField()
     stock = models.IntegerField(default=0)
+    active = models.BooleanField(default=True)
     
     class Meta:
         app_label = "invook"

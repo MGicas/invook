@@ -16,7 +16,7 @@ class InventoryFacade(ABC):
         pass
 
     @abstractmethod
-    def delete_hardware(self, identifier):
+    def deactivate_hardware(self, identifier: str):
         pass
 
     @abstractmethod
@@ -37,7 +37,7 @@ class InventoryFacade(ABC):
         pass
 
     @abstractmethod
-    def delete_supply(self, identifier):
+    def deactivate_supply(self, identifier: str):
         pass
 
     @abstractmethod

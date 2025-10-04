@@ -7,3 +7,4 @@ class LenderSerializer(serializers.Serializer):
     surnames = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     phone = serializers.CharField(max_length=20)
+    active = serializers.BooleanField()

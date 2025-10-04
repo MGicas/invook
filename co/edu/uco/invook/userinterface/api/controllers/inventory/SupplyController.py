@@ -57,9 +57,16 @@ class SupplyController(APIView):
         serializer = SupplySerializer(supply)
         return Response(serializer.data)
 
-    def delete(self, request, code):
+    def put(self, request, code):
         try:
-            self.facade.delete_supply(code)
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            supply = self.facade.deactivate_supply(code)
+            serializer = SupplySerializer(supply)
+            return Response(
+                {"message": f"Supply '{code}' desactivado correctamente", "supply": serializer.data},
+                status=status.HTTP_200_OK
+            )
         except SupplyNotFoundException as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except DatabaseOperationException as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

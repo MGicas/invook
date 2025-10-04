@@ -40,3 +40,6 @@ class UserFacadeImpl(UserFacade):
     
     def list_all_lenders(self):
         return self.lender_service.list_all()
+    
+    def change_lender_state(self, id: str, active: bool):
+        return self.lender_service.change_state(id, active)

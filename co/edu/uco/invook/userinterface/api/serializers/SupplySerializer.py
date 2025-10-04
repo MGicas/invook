@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from ....applicationcore.domain.inventory.Supply import Supply
+from ....applicationcore.domain.inventory.SupplyType import SupplyType
 
 class SupplySerializer(serializers.ModelSerializer):
     
     supply_type = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field="name"
+        slug_field="name",
+        queryset=SupplyType.objects.all()
     )
     
     class Meta:
