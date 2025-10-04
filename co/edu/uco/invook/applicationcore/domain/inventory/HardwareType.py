@@ -1,11 +1,11 @@
 from django.db import models
-
 from ....crosscutting.util.UtilText import UtilText
 
 class HardwareType(models.Model):
     id = models.CharField(max_length = 40, primary_key = True)
     name = models.CharField(max_length = 100, unique = True)
     description = models.TextField()
+    active = models.BooleanField(default=True)
     
     def save(self, *args, **kwargs):
         self.id = UtilText.apply_trim(self.id)

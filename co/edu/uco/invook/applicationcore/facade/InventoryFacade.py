@@ -85,4 +85,55 @@ class InventoryFacade(ABC):
     @abstractmethod
     def list_all_loans(self):
         pass
-    
+
+
+    # HardwareType
+    @abstractmethod
+    def create_hardware_type(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def get_hardware_type(self, identifier: str):
+        pass
+
+    @abstractmethod
+    def patch_hardware_type(self, identifier: str, **kwargs):
+        pass
+
+    @abstractmethod
+    def list_all_hardware_types(self):
+        pass
+
+    @abstractmethod
+    def search_hardware_types_by_name(self, name: str):
+        pass
+
+    @abstractmethod
+    def deactivate_hardware_type(self, identifier: str):
+        pass
+
+
+    #SupplyType
+    @abstractmethod
+    def create_supply_type(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def get_supply_type(self, identifier: str):
+        pass
+
+    @abstractmethod
+    def patch_supply_type(self, identifier: str, **kwargs):
+        pass
+
+    @abstractmethod
+    def list_all_supply_types(self):
+        pass
+
+    @abstractmethod
+    def search_supply_types_by_name(self, name: str):
+        pass
+
+    @abstractmethod
+    def deactivate_supply_type(self, identifier: str):
+        pass

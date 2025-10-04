@@ -12,7 +12,7 @@ from ...applicationcore.domain.inventory.Supply import Supply
 from ...applicationcore.domain.resource.ConsumSupply import ConsumSupply
 from ...applicationcore.domain.user.Lender import Lender
 from ...applicationcore.domain.user.AdministrativeUser import AdministrativeUser
-from ...services.inventory.SupplyService import SupplyService
+from django.db.models import Q
 
 
 class ConsumService:
@@ -75,14 +75,14 @@ class ConsumService:
             raise ValueError("Uno de los supplies con los seriales proporcionados no existe.")
 
     @staticmethod
-    def get(id: int) -> Optional[Consum]:
+    def get(identifier: str):
         try:
-            return Consum.objects.get(id = id)
+            return Consum.objects.filter(
+                Q(id=identifier) | Q(consumsupply__supply__name__icontains=identifier)
+            ).distinct()
         except Consum.DoesNotExist:
             return None
-        except Exception as e:
-            raise DatabaseOperationException("Error al consultar el consum en la base de datos.") from e
-
+        
     @staticmethod
     def update_consum(consum: Consum, **kwargs) -> Consum:
         try:

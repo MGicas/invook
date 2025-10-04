@@ -112,3 +112,43 @@ class InventoryFacadeImpl(InventoryFacade):
     @staticmethod
     def send_message_to_lenders():
         return LoanService.send_message_to_lenders()
+
+
+    #HardwareType
+    def create_hardware_type(self, **kwargs):
+        return self.hardware_type_service.create_hardware_type(**kwargs)
+
+    def get_hardware_type(self, id: str):
+        return self.hardware_type_service.get(id)
+
+    def patch_hardware_type(self, id: str, **kwargs):
+        return self.hardware_type_service.patch_hardware_type(id, **kwargs)
+
+    def list_all_hardware_types(self):
+        return self.hardware_type_service.list_all()
+    
+    def search_hardware_types_by_name(self, name: str):
+        return self.hardware_type_service.search_by_name(name)
+    
+    def deactivate_hardware_type(self, id: str):
+        return self.hardware_type_service.deactivate(id)
+    
+
+    #SupplyType
+    def create_supply_type(self, **kwargs):
+        return self.supply_type_service.create_supply_type(**kwargs)
+
+    def get_supply_type(self, id: str):
+        return self.supply_type_service.get(id)
+
+    def patch_supply_type(self, id: str, **kwargs):
+        return self.supply_type_service.patch_supply_type(id, **kwargs)
+
+    def list_all_supply_types(self):
+        return self.supply_type_service.list_all()
+    
+    def search_supply_types_by_name(self, name: str):
+        return self.supply_type_service.search_by_name(name)
+    
+    def deactivate_supply_type(self, id: str):
+        return self.supply_type_service.deactivate(id)
