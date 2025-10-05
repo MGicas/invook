@@ -13,7 +13,7 @@ class SupplyService:
     @staticmethod
     def create_supply(code, name, description, supply_type, count, quantity) -> Supply:
         try:
-            supply_type_instance = SupplyType.objects.get(id=supply_type)  
+            supply_type_instance = SupplyType.objects.get(name__iexact=supply_type)  
 
             stock = count * quantity
             supply, created = Supply.objects.get_or_create(
@@ -32,6 +32,8 @@ class SupplyService:
                 raise DuplicateSupplyCodeException(code)
         
             return supply
+        except SupplyType.DoesNotExist:
+            raise SupplyNotFoundException(f"El SupplyType con nombre '{supply_type}' no existe.")
         except IntegrityError as e:
             raise DuplicateSupplyCodeException(code) from e
         except DatabaseError as e:
