@@ -11,5 +11,5 @@ class SupplySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Supply
-        fields = ["code", "name", "description", "supply_type", "count", "quantity", "stock"]
+        fields = ["code", "name", "description", "supply_type", "count", "quantity", "stock", "active"]
         read_only_fields = ["stock"]  
