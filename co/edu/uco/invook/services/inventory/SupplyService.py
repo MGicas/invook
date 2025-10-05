@@ -3,6 +3,7 @@ from ...crosscutting.util.UtilPatch import UtilPatch
 from django.db import IntegrityError, DatabaseError
 from ...crosscutting.exception.impl.BusinessException import DuplicateSupplyCodeException, SupplyNotFoundException
 from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperationException
+from ...crosscutting.exception.impl.BusinessException import BusinessException
 from ...crosscutting.util import UtilNumber, UtilText
 from ...applicationcore.domain.inventory.Supply import Supply
 from ...applicationcore.domain.inventory.SupplyType import SupplyType
@@ -50,14 +51,32 @@ class SupplyService:
             raise DatabaseOperationException("Error al consultar supply en la base de datos") from e
 
     @staticmethod
-    def patch_supply(code: str, **kwargs) -> Supply:
+    def patch_supply(code, **kwargs) -> Supply:
         try:
-            supply = Supply.objects.get(code = code)
+            supply = Supply.objects.get(code=code)
+
+            if "code" in kwargs and kwargs["code"] != code:
+                raise BusinessException("No se permite modificar el código del supply.")
+
+            if "supply_type" in kwargs:
+                supply_type_name = kwargs.pop("supply_type")
+                try:
+                    supply_type_instance = SupplyType.objects.get(name__iexact=supply_type_name)
+                    kwargs["supply_type"] = supply_type_instance
+                except SupplyType.DoesNotExist:
+                    raise SupplyNotFoundException(f"El SupplyType '{supply_type_name}' no existe.")
+
+            for attr, value in kwargs.items():
+                setattr(supply, attr, value)
+
+            supply.save()
+            return supply
+
         except Supply.DoesNotExist:
-            raise SupplyNotFoundException(code)
+            raise SupplyNotFoundException(f"El supply con código '{code}' no existe.")
         except DatabaseError as e:
             raise DatabaseOperationException("Error al actualizar supply en la base de datos") from e
-        return UtilPatch.patch_model(supply, kwargs)
+
 
     @staticmethod
     def update_supply(supply: Supply, **kwargs) -> Supply:

@@ -53,7 +53,9 @@ class SupplyController(APIView):
             )
 
     def patch(self, request, code):
-        supply = self.facade.patch_supply(code, **request.data)
+        data = dict(request.data)
+        data.pop('code', None)
+        supply = self.facade.patch_supply(code, **data)
         serializer = SupplySerializer(supply)
         return Response(serializer.data)
 
