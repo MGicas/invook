@@ -50,6 +50,11 @@ class AdministrativeUserService:
             if field in changes and changes[field] is not None:
                 setattr(p, field, changes[field])
         p.save()
+        for field in {"first_name", "last_name", "email"}:
+            if field in changes and changes[field] is not None:
+                setattr(user, field, changes[field])
+        user.save()
+    
         return user
 
     @transaction.atomic
