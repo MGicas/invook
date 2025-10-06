@@ -60,6 +60,9 @@ class AdministrativeUserDetailAPIView(APIView):
 
 
 class AdministrativeUserProfileAPIView(APIView):
+    def __init__(self):
+        self.administrative_facade = UserFacadeImpl()
+        
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, pk: int):
@@ -71,6 +74,9 @@ class AdministrativeUserProfileAPIView(APIView):
 
 
 class AdministrativeUserStateAPIView(APIView):
+    def __init__(self):
+        self.administrative_facade = UserFacadeImpl()
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk: int):
@@ -82,6 +88,9 @@ class AdministrativeUserStateAPIView(APIView):
 
 
 class AdministrativeUserRoleAPIView(APIView):
+    def __init__(self):
+        self.administrative_facade = UserFacadeImpl()
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk: int):
