@@ -87,8 +87,8 @@ class LenderService:
         except DatabaseError as e:
             raise DatabaseOperationException("Error al eliminar lender en la base de datos") from e
 
-        @staticmethod
-        def change_state(id: str, active: bool) -> Lender:
+    @staticmethod
+    def change_state(id: str, active: bool) -> Lender:
             try:
                 lender = Lender.objects.get(id=id)
             except Lender.DoesNotExist:
@@ -96,7 +96,7 @@ class LenderService:
 
             lender.active = active
             lender.save()
-            return lender
+            return lender           
 
 
     @staticmethod
