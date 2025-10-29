@@ -263,15 +263,23 @@ class LoanService:
     def send_message_to_lenders():
         today = datetime.now().date()
 
-        loans = Loan.objects.filter(status="ABIERTO", loan_date__lt=today)
+        loans = Loan.objects.filter(status=LoanStatus.ABIERTO.value, loan_date__lt=today)
         logger.debug(f"Préstamos abiertos con hardware no disponible: {loans}")
 
         if not loans.exists():
             return "No hay préstamos abiertos con hardware no disponible."
+        
+        vencidos_count = 0
 
         for loan in loans:
             lender_email = loan.id_lender.email
             logger.debug(f"Enviando correo a {lender_email}")
+            
+            if loan.loan_date.date() < today:
+                loan.status = LoanStatus.VENCIDO.value
+                loan.save()
+                vencidos_count += 1
+                logger.info(f"Préstamo {loan.id} marcado como VENCIDO.")
 
             hardware_no_disponible = LoanHardware.objects.filter(
                 loan=loan,
