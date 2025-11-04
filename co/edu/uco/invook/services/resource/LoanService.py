@@ -261,55 +261,52 @@ class LoanService:
 
     @staticmethod
     def send_message_to_lenders():
-        today = datetime.now().date()
+        today = timezone.now().date()
 
-        loans = Loan.objects.filter(status=LoanStatus.ABIERTO.value, loan_date__lt=today)
-        logger.debug(f"Préstamos abiertos con hardware no disponible: {loans}")
+
+        loans = Loan.objects.filter(status=LoanStatus.ABIERTO.value)
+        logger.debug(f"Préstamos abiertos encontrados: {loans.count()}")
 
         if not loans.exists():
-            return "No hay préstamos abiertos con hardware no disponible."
-        
+            return "No hay préstamos abiertos."
+
         vencidos_count = 0
 
         for loan in loans:
-            lender_email = loan.id_lender.email
-            logger.debug(f"Enviando correo a {lender_email}")
-            
-            if loan.loan_date.date() < today:
+            if loan.loan_date.date() < today and not LoanService.check_if_all_hardware_returned(loan):
                 loan.status = LoanStatus.VENCIDO.value
-                loan.save()
+                loan.save(update_fields=["status"])
                 vencidos_count += 1
                 logger.info(f"Préstamo {loan.id} marcado como VENCIDO.")
 
-            hardware_no_disponible = LoanHardware.objects.filter(
-                loan=loan,
-                hardware__available=HardwareAvailable.NO_DISPONIBLE.name
-            ).select_related('hardware')
+                lender_email = loan.id_lender.email
 
-            hardware_info = ""
-            for item in hardware_no_disponible:
-                hardware_info += f"- {item.hardware.name} (Serial: {item.hardware.serial})\n"
+                hardware_no_disponible = LoanHardware.objects.filter(
+                    loan=loan,
+                    hardware__available=HardwareAvailable.NO_DISPONIBLE.value
+                ).select_related("hardware")
 
-            if not hardware_info:
-                hardware_info = "No hay hardware no disponible para este préstamo."
+                hardware_info = "\n".join(
+                    [f"- {item.hardware.name} (Serial: {item.hardware.serial})" for item in hardware_no_disponible]
+                ) or "No hay hardware no disponible para este préstamo."
 
-            subject = "Recordatorio: Tienes un préstamo abierto con hardware no disponible"
-            body = f"""
-            Hola {loan.id_lender.names} {loan.id_lender.surnames},
+                subject = "Recordatorio: préstamo vencido"
+                body = f"""
+                Hola {loan.id_lender.names} {loan.id_lender.surnames},
 
-            Tu préstamo con ID {loan.id} está en estado abierto desde {loan.loan_date.strftime('%Y-%m-%d')}.
-            A continuación, te informamos sobre los hardware asociados a tu préstamo que están actualmente PRESTADOS:
+                Tu préstamo con ID {loan.id}, iniciado el {loan.loan_date.strftime('%Y-%m-%d')}, 
+                aún tiene hardware sin devolver y se ha marcado como VENCIDO.
 
-            {hardware_info}
+                A continuación, te informamos sobre los hardware pendientes:
 
-            Por favor, verifica los detalles de tu préstamo y la disponibilidad de los hardware.
-            """
-            logger.debug(f"Enviando correo a {lender_email}")
-            try:
-                logger.debug(f"Enviando correo a {lender_email}")   
-                response, email_log = SendGridService().send_email(subject, lender_email, body)
-                logger.debug(f"Correo enviado a {lender_email}. Estado: {response.status_code}")
-            except Exception as e:
-                logger.error(f"Error al enviar correo a {lender_email}: {e}")
-        
-        return f"Messages sent to {len(loans)} lenders."
+                {hardware_info}
+
+                Por favor, realiza la devolución lo antes posible.
+                """
+
+                try:
+                    SendGridService().send_email(subject, lender_email, body)
+                except Exception as e:
+                    logger.error(f"Error al enviar correo a {lender_email}: {e}")
+
+        return f"Se marcaron {vencidos_count} préstamos como vencidos."

@@ -8,7 +8,8 @@ class SendMessagesToLendersController(APIView):
     def post(self, request):
         
         try:
-            result_message = InventoryFacadeImpl.send_message_to_lenders()
+            facade = InventoryFacadeImpl()
+            result_message = facade.send_message_to_lenders()
             
             return Response(
                 {"detail": "Proceso de notificaciones iniciado.", "status": result_message},

@@ -2,6 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
@@ -25,10 +26,17 @@ class AdministrativeUserListCreateAPIView(APIView):
     def get(self, request):
         qs = AdministrativeUser.objects.select_related("profile").all().order_by("id")
 
-        name = request.query_params.get("name")
-        if name:
-            qs = qs.filter(profile__names__icontains=name)
-
+        # 🔍 Parámetro de búsqueda general
+        search = request.query_params.get("search")
+        if search:
+            qs = qs.filter(
+                Q(username__icontains=search)
+                | Q(email__icontains=search)
+                | Q(profile__names__icontains=search)
+                | Q(profile__surnames__icontains=search)
+                | Q(profile__document_id__icontains=search)
+            )
+        
         paginator = PageNumberPagination()
         paginator.page_size = 10
         page = paginator.paginate_queryset(qs, request)
@@ -68,6 +76,7 @@ class AdministrativeUserProfileAPIView(APIView):
     def patch(self, request, pk: int):
         ser = AdministrativeUserUpdateProfileSerializer(data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
+        print("Datos validados:", ser.validated_data) 
         facade = self.administrative_facade
         user = facade.update_profile(pk, **ser.validated_data)
         return Response(AdministrativeUserDetailSerializer(user).data)

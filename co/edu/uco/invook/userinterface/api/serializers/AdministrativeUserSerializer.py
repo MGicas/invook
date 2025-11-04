@@ -43,6 +43,7 @@ class AdministrativeUserUpdateProfileSerializer(serializers.Serializer):
     names = serializers.CharField(required=False)
     surnames = serializers.CharField(required=False)
     phone = serializers.CharField(required=False)
+    email = serializers.CharField(required= False)
     document_id = serializers.CharField(required=False)
 
 class ChangeStateSerializer(serializers.Serializer):
