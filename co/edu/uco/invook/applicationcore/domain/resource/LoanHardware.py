@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from ..inventory.Hardware import Hardware
 from ..inventory.HardwareState import HardwareState
 from ..user.AdministrativeUser import AdministrativeUser
@@ -7,6 +8,7 @@ from .Loan import Loan
 class LoanHardware(models.Model):
     loan = models.ForeignKey(Loan, on_delete = models.CASCADE)
     hardware = models.ForeignKey(Hardware, on_delete = models.CASCADE)
+    loaned_at = models.DateTimeField(default=timezone.now)
     returned_at = models.DateTimeField(null=True, blank=True)
     return_state = models.CharField(max_length=50, null=True, blank=True)
     
