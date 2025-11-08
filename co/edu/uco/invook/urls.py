@@ -13,7 +13,7 @@ from .userinterface.api.controllers.user.AdministrativeUserController import (
     AdministrativeUserRoleAPIView,
 )
 from .userinterface.api.controllers.user.LoginController import (
-    AdminTokenObtainPairController, AdminTokenRefreshView, LogoutController, WhoAmIController
+    AdminTokenObtainPairController, AdminTokenRefreshView, WhoAmIController
 )
 from .userinterface.api.controllers.resource.DailyStatisticsController import DailyStatisticsController
 from .userinterface.api.controllers.inventory.RestockSupplyController import RestockSupplyController
@@ -22,6 +22,7 @@ from .userinterface.api.controllers.notification.SendEmailController import Send
 from .userinterface.api.controllers.resource.SendMessagesToLendersController import SendMessagesToLendersController
 from .userinterface.api.controllers.inventory.SupplyTypeController import SupplyTypeController
 from .userinterface.api.controllers.inventory.HardwareTypeController import HardwareTypeController
+from .userinterface.api.controllers.user.LogoutController import LogoutController
 
 urlpatterns = [
     path('', views.home, name='home'), 

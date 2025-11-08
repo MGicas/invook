@@ -19,6 +19,8 @@ from ...crosscutting.exception.impl.TechnicalExceptions import DatabaseOperation
 from ...crosscutting.exception.impl.BusinessException import HardwareNotFoundException, LenderNotFoundException, AdministrativeUserNotFoundException
 from datetime import datetime
 from ..notification.SendGridService import SendGridService
+from ...applicationcore.domain.notification.EmailLog import EmailLog
+from django.utils import timezone
 
 class LoanService:
 
@@ -106,7 +108,7 @@ class LoanService:
 
     @staticmethod
     def validate_loan_status(loan: Loan) -> bool:
-        return loan.status == LoanStatus.ABIERTO.value
+        return loan.status == LoanStatus.ABIERTO.value or loan.status == LoanStatus.VENCIDO.value
 
     @staticmethod
     def check_if_all_hardware_returned(loan: Loan) -> bool:
@@ -261,10 +263,9 @@ class LoanService:
 
     @staticmethod
     def send_message_to_lenders():
-        today = timezone.now().date()
+        today = timezone.localtime(timezone.now()).date()
 
-
-        loans = Loan.objects.filter(status=LoanStatus.ABIERTO.value)
+        loans = Loan.objects.filter(status__in=[LoanStatus.ABIERTO.value, LoanStatus.VENCIDO.value])
         logger.debug(f"Préstamos abiertos encontrados: {loans.count()}")
 
         if not loans.exists():
@@ -281,32 +282,54 @@ class LoanService:
 
                 lender_email = loan.id_lender.email
 
-                hardware_no_disponible = LoanHardware.objects.filter(
-                    loan=loan,
-                    hardware__available=HardwareAvailable.NO_DISPONIBLE.value
-                ).select_related("hardware")
+                email_log_exists = EmailLog.objects.filter(
+                    to_email=lender_email, 
+                    sent_at__date=today,
+                ).exists()
+                print(f"Correo ya enviado hoy: {email_log_exists}")
 
-                hardware_info = "\n".join(
-                    [f"- {item.hardware.name} (Serial: {item.hardware.serial})" for item in hardware_no_disponible]
-                ) or "No hay hardware no disponible para este préstamo."
+                email_logs = EmailLog.objects.filter(
+                    to_email=lender_email, 
+                    sent_at__date=today,
+                )
 
-                subject = "Recordatorio: préstamo vencido"
-                body = f"""
-                Hola {loan.id_lender.names} {loan.id_lender.surnames},
+                print(f"Registros encontrados para {lender_email}:")
+                for log in email_logs:
+                    print(f"Correo enviado el: {log.sent_at}")
 
-                Tu préstamo con ID {loan.id}, iniciado el {loan.loan_date.strftime('%Y-%m-%d')}, 
-                aún tiene hardware sin devolver y se ha marcado como VENCIDO.
+                if not email_log_exists:
 
-                A continuación, te informamos sobre los hardware pendientes:
+                    hardware_no_disponible = LoanHardware.objects.filter(
+                        loan=loan,
+                        hardware__available=HardwareAvailable.NO_DISPONIBLE.value
+                    ).select_related("hardware")
 
-                {hardware_info}
+                    hardware_info = "\n".join(
+                        [f"- {item.hardware.name} (Serial: {item.hardware.serial})" for item in hardware_no_disponible]
+                    ) or "No hay hardware no disponible para este préstamo."
 
-                Por favor, realiza la devolución lo antes posible.
-                """
+                    subject = "Recordatorio: préstamo vencido"
+                    body = f"""
+                    Hola {loan.id_lender.names} {loan.id_lender.surnames},
 
-                try:
-                    SendGridService().send_email(subject, lender_email, body)
-                except Exception as e:
-                    logger.error(f"Error al enviar correo a {lender_email}: {e}")
+                    Tu préstamo con ID {loan.id}, iniciado el {loan.loan_date.strftime('%Y-%m-%d')}, 
+                    aún tiene hardware sin devolver y se ha marcado como VENCIDO.
+
+                    A continuación, te informamos sobre los hardware pendientes:
+
+                    {hardware_info}
+
+                    Por favor, realiza la devolución lo antes posible.
+                    """
+
+                    try:
+                        print("Enviando correo a", lender_email)
+                        SendGridService().send_email(subject, lender_email, body)
+                    except Exception as e:
+                        logger.error(f"Error al enviar correo a {lender_email}: {e}")
+                        print(f"Error al enviar correo a {lender_email}: {e}")
+                    else:
+                        print(f"El correo ya fue enviado hoy a {lender_email}.")
+                        logger.debug(f"El correo ya fue enviado hoy a {lender_email}.")
 
         return f"Se marcaron {vencidos_count} préstamos como vencidos."

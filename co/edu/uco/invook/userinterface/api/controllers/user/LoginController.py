@@ -6,26 +6,23 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from ...serializers.AdminTokenObtainPairSerializer import AdminTokenObtainPairSerializer
+from .....services.resource.LoanService import LoanService
 
 class AdminTokenObtainPairController(TokenObtainPairView):
     serializer_class = AdminTokenObtainPairSerializer
 
+    def post(self, request, *args, **kwargs):
+        # Proceder con la autenticación normal
+        response = super().post(request, *args, **kwargs)
+        
+        # Llamar al servicio para enviar los correos de notificación
+        LoanService.send_message_to_lenders()
+
+        return response
+
+
 class AdminTokenRefreshView(TokenRefreshView):
     pass
-
-class LogoutController(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        refresh = request.data.get("refresh")
-        if not refresh:
-            return Response({"detail": "Falta refresh token."}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            token = RefreshToken(refresh)
-            token.blacklist()
-        except Exception:
-            return Response({"detail": "Token inválido."}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_205_RESET_CONTENT)
 
 class WhoAmIController(APIView):
     permission_classes = [IsAuthenticated]
